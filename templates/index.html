@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PharmacyPrep – Evaluating Exam Assessment Evaluator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root{
+      --bg:#f3f5f8;
+      --panel:#ffffff;
+      --panel-2:#f8fafc;
+      --panel-3:#eef2f7;
+      --border:rgba(15,23,42,.10);
+      --text:#0f172a;
+      --muted:#64748b;
+      --dark:#111827;
+      --shadow:0 18px 42px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:'Inter',sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(15,23,42,.035), transparent 24%),
+        radial-gradient(circle at 80% 30%, rgba(15,23,42,.03), transparent 18%),
+        linear-gradient(180deg,#f7f9fb 0%,#eef2f6 100%);
+      overflow:hidden;
+    }
+    .app-shell{width:100vw;height:100vh;display:flex;gap:18px;padding:18px}
+    .sidebar{
+      width:320px;min-width:320px;
+      background:linear-gradient(180deg,#fff,#f7f9fc);
+      border:1px solid var(--border);
+      border-right:2px solid rgba(15,23,42,.85);
+      box-shadow:var(--shadow);
+      padding:24px 20px 20px;
+      display:flex;flex-direction:column;
+    }
+    
+    .brand h1{font-size:1.95rem;font-weight:800;letter-spacing:-0.04em;margin-bottom:4px}
+    .brand p{color:var(--muted);font-size:.92rem}
+    .brand-divider{height:1px;margin:18px 0 22px;background:linear-gradient(90deg,rgba(15,23,42,.22),rgba(15,23,42,0))}
+    .field{margin-bottom:18px}
+    .field label{display:block;margin-bottom:8px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#111827}
+    select,input[type="number"]{
+      width:100%;height:56px;border-radius:12px;border:1px solid var(--border);
+      background:#fff;color:#111827;padding:0 14px;font-size:.96rem;font-weight:600;
+      outline:none;transition:.18s ease;font-family:'Inter',sans-serif;
+    }
+    .top-back-btn{
+  height:42px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid rgba(15,23,42,.12);
+  background:#fff;
+  color:#111827;
+  font-weight:800;
+  font-size:.92rem;
+  cursor:pointer;
+  transition:.18s ease;
+  font-family:'Inter',sans-serif;
+}
+.top-back-btn:hover{
+  background:#f8fafc;
+  transform:translateY(-1px);
+}
+    select:hover,select:focus,input[type="number"]:focus{border-color:rgba(15,23,42,.35);box-shadow:0 0 0 4px rgba(15,23,42,.05)}
+    select:disabled{opacity:.55;cursor:not-allowed}
+    .status-chip{min-height:48px;border-radius:12px;border:1px solid rgba(15,23,42,.12);background:#fff;display:flex;align-items:center;padding:0 14px;font-size:.94rem;font-weight:600;color:#111827}
+    .status-chip span{margin-right:8px}
+    .sidebar-actions{margin-top:auto;display:grid;gap:10px;padding-top:20px}
+    .side-btn{
+      width:100%;height:56px;border:none;border-radius:12px;
+      background:linear-gradient(180deg,#1f2937,#111827);color:#fff;
+      font-size:1rem;font-weight:800;cursor:pointer;transition:.18s ease;
+      box-shadow:0 8px 18px rgba(15,23,42,.08);font-family:'Inter',sans-serif;
+    }
+    .side-btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,.12)}
+    .side-btn.back-btn{
+      background:linear-gradient(180deg,#fff,#f1f5f9);
+      color:#111827;border:1px solid rgba(15,23,42,.15);
+      box-shadow:none;
+    }
+    .side-btn.back-btn:hover{background:linear-gradient(180deg,#f1f5f9,#e5eaf2)}
+    .main-panel{
+      flex:1;min-width:0;
+      background:linear-gradient(180deg,#fff,#f8fafc);
+      border:1px solid rgba(15,23,42,.12);border-radius:24px;
+      box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;
+    }
+    .main-topbar{
+      height:72px;padding:16px 26px;display:flex;align-items:center;
+      justify-content:space-between;border-bottom:1px solid rgba(15,23,42,.06);
+      background:#fff;flex-shrink:0;
+    }
+    .top-pill{
+      height:42px;padding:0 16px;border-radius:12px;display:inline-flex;align-items:center;
+      border:1px solid rgba(15,23,42,.08);background:#f8fafc;color:var(--muted);font-weight:700;font-size:.92rem;
+    }
+    .main-scroll{flex:1;overflow-y:auto;padding:24px}
+    .main-scroll::-webkit-scrollbar{width:8px}
+    .main-scroll::-webkit-scrollbar-thumb{background:rgba(15,23,42,.12);border-radius:999px}
+    .view{display:none}
+    .view.active{display:block;animation:fadeIn .18s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    .card{background:linear-gradient(180deg,#fff,#fbfcfd);border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:22px;box-shadow:0 10px 24px rgba(15,23,42,.03)}
+    .stack{display:grid;gap:18px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card-title{font-size:1.18rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+    .card-sub{color:var(--muted);font-size:.94rem;line-height:1.55;margin-bottom:18px}
+    .subtle-label{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#111827;margin-bottom:8px;display:block}
+    .hero{min-height:calc(100vh - 190px);display:flex;align-items:center;justify-content:center;text-align:center}
+    .hero-inner{max-width:850px;width:100%}
+    .hero-mark{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,#111,#666);margin:0 auto 22px;box-shadow:0 12px 28px rgba(15,23,42,.12)}
+    .hero h2{font-size:2.8rem;line-height:1.06;font-weight:800;letter-spacing:-.05em;margin-bottom:12px}
+    .hero p{color:var(--muted);font-size:1.04rem;line-height:1.65;max-width:680px;margin:0 auto 26px}
+    .chart-wrap{position:relative;width:100%;height:260px}
+    .chart-wrap.sm{height:220px}
+    .chart-wrap.md{height:300px}
+    .part-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#f8fafc;border:1px solid rgba(15,23,42,.08);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+    .part-banner strong{font-size:1rem;display:block;margin-bottom:4px}
+    .part-banner span{color:var(--muted);font-size:.88rem}
+    .part-chip{padding:10px 12px;border-radius:10px;background:#111827;color:#fff;font-size:.82rem;font-weight:800;white-space:nowrap}
+    .row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+    .row > div{flex:1;min-width:180px}
+    .primary-btn,.secondary-btn,.mini-btn{border:none;border-radius:12px;font-weight:800;cursor:pointer;transition:.18s ease;font-family:'Inter',sans-serif}
+    .primary-btn{min-width:160px;height:56px;background:#111827;color:#fff;padding:0 18px;font-size:1rem}
+    .secondary-btn{min-width:160px;height:56px;background:#fff;color:#111827;border:1px solid rgba(15,23,42,.12);padding:0 18px;font-size:1rem}
+    .mini-btn{height:48px;min-width:68px;padding:0 14px;background:#111827;color:#fff;font-size:.92rem}
+    .primary-btn:hover,.secondary-btn:hover,.mini-btn:hover{transform:translateY(-1px)}
+    .metric-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid rgba(15,23,42,.06);font-size:.95rem}
+    .metric-row:last-child{border-bottom:none}
+    .metric-pill{display:inline-flex;align-items:center;padding:8px 10px;border-radius:10px;background:#f8fafc;border:1px solid rgba(15,23,42,.08);font-size:.82rem;font-weight:800;color:#334155;white-space:nowrap}
+    .attempt-box{margin-top:16px;padding:16px;border-radius:14px;border:1px solid rgba(15,23,42,.08);background:#f8fafc}
+    .attempt-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(15,23,42,.06);font-size:.9rem}
+    .attempt-item:last-child{border-bottom:none}
+    .results-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .chart-card{background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:20px}
+    .chart-card h3{font-size:1rem;font-weight:800;margin-bottom:6px}
+    .chart-card p{color:var(--muted);font-size:.9rem;margin-bottom:16px;line-height:1.5}
+    .donut-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}
+    .donut-card{flex:1;min-width:180px;background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .donut-label{margin-top:12px;font-size:.9rem;color:var(--muted);font-weight:700;text-align:center}
+    .notice{margin-top:18px;padding:16px 18px;border-radius:14px;background:#fffaf0;border:1px solid rgba(180,83,9,.18);color:#92400e;line-height:1.6;font-size:.94rem;font-weight:600}
+    .strong-list{display:grid;gap:12px}
+    .strong-item{padding:14px 16px;border-radius:14px;background:#fff;border:1px solid rgba(15,23,42,.08)}
+    .strong-item strong{display:block;margin-bottom:4px}
+    #resultsMetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+    @media(max-width:1200px){
+      body{overflow:auto}
+      .app-shell{flex-direction:column;height:auto;min-height:100vh}
+      .sidebar{width:100%;min-width:100%}
+      .grid-2,.grid-3,.results-grid,#resultsMetrics{grid-template-columns:1fr}
+      .hero h2{font-size:2.2rem}
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <h1>PharmacyPrep</h1>
+      <p>evaluating exam assessment evaluator</p>
+      <div class="brand-divider"></div>
+    </div>
+
+    <div class="field">
+      <label>Course</label>
+      <select id="ddCourse"><option selected>Evaluating Exam</option></select>
+    </div>
+
+    <div class="field">
+      <label for="ddPart">Part</label>
+      <select id="ddPart"><option disabled selected>Select Part</option></select>
+    </div>
+
+    <div class="field">
+      <label for="ddChapter">Chapter</label>
+      <select id="ddChapter" disabled><option disabled selected>Select Chapter</option></select>
+    </div>
+
+    <div class="status-chip" id="status"><span>●</span>&nbsp;Default page loaded</div>
+
+<div class="sidebar-actions">
+  <button class="side-btn" id="viewResultsBtn">View Results</button>
+  <button class="side-btn" id="infoBtn">Info</button>
+</div>
+  </aside>
+
+  <main class="main-panel">
+  <div class="main-topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="top-back-btn" id="backBtn" style="display:none">← Back</button>
+    <div class="top-pill" id="topPillLeft">Evaluating Exam only</div>
+  </div>
+  <div class="top-pill">Weighted grading: 25 / 55 / 20</div>
+</div>
+
+    <div class="main-scroll">
+
+      <!-- DEFAULT -->
+      <section class="view active" id="defaultView">
+        <div class="hero">
+          <div class="hero-inner">
+            <div class="hero-mark"></div>
+            <h2>Evaluating Exam Dashboard</h2>
+            <p>
+              Start by selecting a part. Select a part to enter your main exam score.
+              Select a chapter to log individual attempts. Click <strong>View Results</strong> any time for your full weighted grade.
+            </p>
+            <div class="card" style="margin-top:24px;text-align:left;">
+<div class="card-title">Grade breakdown</div>
+<div class="card-sub">Shows how much each weighted section is currently contributing to your final grade, plus what remains.</div>
+              <div class="chart-wrap sm"><canvas id="defaultBarChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PART VIEW -->
+      <section class="view" id="partView">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Part overview</div>
+            <div class="card-sub">Current grade and main part exam score entry.</div>
+            <div id="partOnlyPanel"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Part progress snapshot</div>
+            <div class="card-sub">Live chapter progress for the selected part.</div>
+            <div id="partSnapshotPanel"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHAPTER VIEW -->
+      <section class="view" id="chapterView">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Part overview</div>
+            <div class="card-sub">Main part score and current section estimate.</div>
+            <div id="chapterPartPanel"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Chapter scoring</div>
+            <div class="card-sub">Log attempts for the selected chapter.</div>
+            <div id="chapterOnlyPanel"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULTS VIEW -->
+      <section class="view" id="resultsView">
+        <div class="stack">
+          <div class="card">
+            <div class="card-title">Results overview</div>
+            <div class="card-sub">Your weighted grade, strongest parts, progress, and overall trend.</div>
+            <div id="resultsMetrics"></div>
+            <div class="donut-row" id="donutWrap"></div>
+            <div class="notice" id="completionNotice"></div>
+          </div>
+          <div class="results-grid">
+            <div class="chart-card">
+              <h3>Part performance</h3>
+              <p>Which parts you are doing best in right now.</p>
+              <div class="chart-wrap md"><canvas id="sectionBarChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3>Improvement trend</h3>
+              <p>Trend from all chapter attempts in the order entered.</p>
+              <div class="chart-wrap md"><canvas id="trendLineChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3>Chapter completion</h3>
+              <p>How much of each part you have scored so far.</p>
+              <div class="chart-wrap md"><canvas id="progressBarChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+              <h3>Score source</h3>
+              <p>Effective score per part — part exam if saved, otherwise chapter average.</p>
+              <div class="chart-wrap md"><canvas id="chapterAvgChart"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Strongest parts so far</div>
+            <div class="card-sub">Ordered from strongest current section to weakest.</div>
+            <div class="strong-list" id="strongPartsList"></div>
+          </div>
+        </div>
+
+</div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+const EVALUATING_EXAM = {
+  "Part 1: Pharmaceutical Sciences":{weight:25,chapters:["Abbreviation and Terminology","Chapter 1 Pharmacokinetics","Chapter 2 Biopharmaceutics","Chapter 3 Drug Metabolism and Pharmacogenetics","Chapter 4 Drug Receptors and Affecting Neurotransmitters","Chapter 5 Pharmacodynamics","Chapter 6 Therapeutic Drug Classes","Chapter 7 Pharmacology of Autonomic Nervous System Drugs","Chapter 8 Pharmacology of Histamines, Serotonin, and Prostaglandin","Chapter 9 Pharmacology of Cardiovascular Drugs","Chapter 10 Pharmacology of Psychiatric & Neurological Drugs","Chapter 11 Pharmacology of Endocrine Drugs","Chapter 12 Pharmacology of Respiratory Drugs","Chapter 13 Pharmacology of Musculoskeletal Drugs","Chapter 14 Pharmacology of Antimicrobial Drugs","Chapter 15 Pharmacology of Oncology Drugs","Chapter 16 Pharmacology of Gastrointestinal Drugs","Chapter 17 Pharmacology of Analgesics","Chapter 18 Pharmacology of Anesthetics","Chapter 19 Biotechnology and Pharmacogenetics","Chapter 20 Immunology and Immunizations","Chapter 21 Toxicology","Chapter 22 Physical Pharmacy and Drug Stability","Chapter 23 Pharmaceutics and Dosage Forms","Chapter 24 Pharmaceutical Excipient","Chapter 25 Drug Delivery Systems"]},
+  "Part 2: Pharmacy Practice":{weight:55,chapters:["Chapter 26 Medication Administration","Chapter 27 Sig Codes and Directions","Chapter 28 Basic Pharmacy Math","Chapter 29 Dosage Calculation","Chapter 30 Dilutions and Concentration","Chapter 31 Electrolyte Solutions","Chapter 32 Dosing Calculations for Parenteral Medications","Chapter 33 Compounding Non-Sterile and Sterile Preps","Chapter 34 Clinical Biochemistry and Diagnostic Testing","Chapter 35 Patient Care Process","Chapter 36 Safety of Medications in Special Populations","Chapter 37 Adverse Drug Reactions and Management","Chapter 38 Drug Interactions","Chapter 39 OTC and Prescription Drugs for Dermatological and Foot Conditions","Chapter 40 OTC and Prescription Drugs for Ophthalmic, Ear and Mouth Disorders","Chapter 41 OTC Drugs Antihistamine, Decongestants, Antitussives, Expectorants","Chapter 42 OTC Drugs for Nausea, Vomiting, Constipation, Diarrhea, Hemorrhoids","Chapter 43 Analgesics, and Topical Pain Relievers","Chapter 44 Asthma and Chronic Obstructive Pulmonary Disease","Chapter 45 Gastrointestinal Disorders","Chapter 46 Diabetes Mellitus","Chapter 47 Endocrine Disorders","Chapter 48 Gynaecologic and Genitourinary Disorders","Chapter 49 Urologic Disorders","Chapter 50 Rheumatoid Arthritis, Osteoarthritis and Gout Arthritis","Chapter 51 Osteoporosis","Chapter 52 Hypertension","Chapter 53 Coronary Artery Diseases","Chapter 54 Stroke","Chapter 55 Congestive Heart Failure","Chapter 56 Cardiac Arrhythmias","Chapter 57 Peripheral Vascular Diseases","Chapter 58 Pain Management","Chapter 59 Anxiety Disorder","Chapter 60 Depression","Chapter 61 Psychosis and Schizophrenia","Chapter 62 Dementia","Chapter 63 Seizures and Epilepsy","Chapter 64 Parkinson's Disease","Chapter 65 Infectious Disease","Chapter 66 Clinical Pharmacokinetics","Chapter 67 Hematological Disorders","Chapter 68 Renal Diseases","Chapter 69 Chronic Liver Diseases","Chapter 70 Substance Abuse Disorders & Smoking Cessation","Chapter 71 Sleep Related Disorders","Chapter 72 Nutrition and Obesity","Chapter 73 Immunologic Disorders","Chapter 74 Carcinogenesis and Neoplasia","Chapter 75 Vitamins and Supplements"]},
+  "Part 3: Social / Behavioural / Administrative Sciences":{weight:20,chapters:["Chapter 76 Canadian Healthcare System, Health Equity and Social Determinants of Health","Chapter 77 Professionalism and Ethics","Chapter 78 Professional Pharmacy Communication Skills","Chapter 79 Collaboration and Teamwork","Chapter 80 Drug Information Resources and Literature Evaluation","Chapter 81 Medication Errors and Patient Safety Practices","Chapter 82 Health Promotion and Disease Prevention","Chapter 83 Canadian Pharmacy Law and Jurisprudence","Chapter 84 Pharmacist Scope of Practice in Canada","Chapter 85 Pharmacy Management","Chapter 86 The New Drug Approval Process","Chapter 87 Pharmacoeconomics","Chapter 88 Pharmacoepidemiology","Chapter 89 Biostatistics","Chapter 90 Hospital Pharmacy"]}
+};
+
+const state={selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[]};
+
+const charts={};
+const viewStack=["defaultView"];
+const STORAGE_KEY = "pharmacyprep-evaluating-exam-state";
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    partExamScores: state.partExamScores,
+    chapterAttempts: state.chapterAttempts,
+    attemptTimeline: state.attemptTimeline
+  }));
+}
+
+function loadState(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return;
+
+  try{
+    const saved = JSON.parse(raw);
+    state.partExamScores = saved.partExamScores || {};
+    state.chapterAttempts = saved.chapterAttempts || {};
+    state.attemptTimeline = saved.attemptTimeline || [];
+  }catch(e){
+    console.error("Could not load saved data");
+  }
+}
+const ddPart=document.getElementById("ddPart");
+const ddChapter=document.getElementById("ddChapter");
+const statusEl=document.getElementById("status");
+const backBtn=document.getElementById("backBtn");
+const topPill=document.getElementById("topPillLeft");
+
+Object.keys(EVALUATING_EXAM).forEach(part=>{
+  const o=document.createElement("option");
+  o.value=part; o.textContent=`${part} (${EVALUATING_EXAM[part].weight}%)`;
+  ddPart.appendChild(o);
+});
+
+ddPart.addEventListener("change",()=>{
+  state.selectedPart=ddPart.value;
+  state.selectedChapter="";
+  ddChapter.innerHTML='<option disabled selected>Select Chapter</option>';
+  EVALUATING_EXAM[state.selectedPart].chapters.forEach(ch=>{
+    const o=document.createElement("option"); o.value=ch; o.textContent=ch;
+    ddChapter.appendChild(o);
+  });
+  ddChapter.disabled=false;
+  ddChapter.selectedIndex=0;
+  setStatus("Part selected");
+  pushView("partView");
+  renderPartView();
+});
+
+ddChapter.addEventListener("change",()=>{
+  state.selectedChapter=ddChapter.value;
+  setStatus("Chapter selected");
+  pushView("chapterView");
+  renderChapterView();
+});
+
+document.getElementById("viewResultsBtn").addEventListener("click",()=>{
+  pushView("resultsView");
+  renderResultsView();
+  setStatus("Results loaded");
+});
+
+backBtn.addEventListener("click",()=>{
+  if(viewStack.length<=1)return;
+  viewStack.pop();
+  const prev=viewStack[viewStack.length-1];
+  showView(prev);
+  backBtn.style.display=viewStack.length>1?"":"none";
+  setStatus("Navigated back");
+  if(prev==="defaultView"){
+    ddPart.selectedIndex=0;
+    ddChapter.innerHTML='<option disabled selected>Select Chapter</option>';
+    ddChapter.disabled=true;
+    state.selectedPart=""; state.selectedChapter="";
+    topPill.textContent="Evaluating Exam only";
+    destroyChart("defaultBarChart"); renderDefaultBarChart();
+  } else if(prev==="partView"){
+    state.selectedChapter=""; ddChapter.selectedIndex=0;
+    topPill.textContent=state.selectedPart.split(":")[0].trim();
+    renderPartView();
+  } else if(prev==="chapterView"){
+    renderChapterView();
+  } else if(prev==="resultsView"){
+    renderResultsView();
+  }
+});
+
+document.getElementById("infoBtn").addEventListener("click",()=>alert(
+  "Default page: 3-bar grade overview.\n"+
+  "Select a Part: enter your main part exam score.\n"+
+  "Select a Chapter: log individual chapter attempts.\n"+
+  "View Results: full weighted grade breakdown.\n\n"+
+  "Use ← Go Back to return to the previous screen at any time."
+));
+
+function pushView(id){
+  if(viewStack[viewStack.length-1]!==id) viewStack.push(id);
+  showView(id);
+  backBtn.style.display=viewStack.length>1?"":"none";
+  const labels={defaultView:"Evaluating Exam only",partView:state.selectedPart?state.selectedPart.split(":")[0].trim():"Part",chapterView:state.selectedChapter?trunc(state.selectedChapter,28):"Chapter",resultsView:"Full results"};
+  topPill.textContent=labels[id]||"Evaluating Exam";
+}
+
+
+async function loadAiResults(){
+  const target = document.getElementById("aiSummaryContent");
+  if (!target) return;
+
+  target.innerHTML = "Loading AI interpretation...";
+
+  try {
+    const res = await fetch("/api/results/ai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(buildResultsPayload())
+    });
+
+    const data = await res.json();
+
+    if (!data.ok && !data.ai) {
+      target.innerHTML = "Could not load AI interpretation.";
+      return;
+    }
+
+    const ai = data.ai || {};
+    target.innerHTML = `
+      <div style="display:grid;gap:12px;">
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Summary</strong>
+          <div>${xe(ai.summary || "No summary available.")}</div>
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Strengths</strong>
+          <div>${xe(ai.strengths || "No strengths summary available.")}</div>
+        </div>
+        <div>
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Focus next</strong>
+          <div>${xe(ai.focus_next || "No next-step summary available.")}</div>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    target.innerHTML = "AI interpretation could not be loaded right now.";
+  }
+}
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function setStatus(m){statusEl.innerHTML=`<span>●</span>&nbsp;${m}`}
+function trunc(s,n){return s.length>n?s.slice(0,n)+"…":s}
+function chKey(p,c){return`${p}|||${c}`}
+function clamp(v){const n=parseFloat(v);return isNaN(n)?null:Math.max(0,Math.min(100,Math.round(n*10)/10))}
+function latestCh(p,c){
+  const a = state.chapterAttempts[chKey(p,c)] || [];
+  return a.length ? a[a.length - 1] : null;
+}
+
+function partProgress(p){
+  const chs = EVALUATING_EXAM[p].chapters;
+
+  let done = 0;
+  let earned = 0;
+  let possible = 0;
+
+  chs.forEach(c => {
+    const a = latestCh(p, c);
+    if(a){
+      done++;
+      earned += Number(a.earned || 0);
+      possible += Number(a.possible || 0);
+    }
+  });
+
+  const percent = possible > 0
+    ? Math.round((earned / possible) * 1000) / 10
+    : null;
+
+  return {
+    done,
+    total: chs.length,
+    earned,
+    possible,
+    percent
+  };
+}
+
+function effScore(p){
+  const pr = partProgress(p);
+
+  return {
+    score: pr.percent,
+    source: pr.percent !== null ? "chapter aggregate" : "no score yet",
+    progress: pr
+  };
+}
+
+function weightedGrade(){
+  let ws=0,wc=0;
+  Object.keys(EVALUATING_EXAM).forEach(p=>{const w=EVALUATING_EXAM[p].weight,e=effScore(p);if(e.score!==null){ws+=e.score*w;wc+=w;}});
+  return{score:wc?Math.round(ws/wc*10)/10:null,coverage:wc};
+}
+
+function projected(){
+  let t=0;
+  Object.keys(EVALUATING_EXAM).forEach(p=>{const w=EVALUATING_EXAM[p].weight,e=effScore(p);t+=(e.score??0)*w;});
+  return Math.round(t/100*10)/10;
+}
+
+function xe(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+function mkChart(id,cfg){
+  destroyChart(id);
+  const c=document.getElementById(id);
+  if(!c)return;
+  charts[id]=new Chart(c,cfg);
+}
+
+const PC=["#111827","#374151","#6b7280"];
+const PL=["rgba(17,24,39,.12)","rgba(55,65,81,.12)","rgba(107,114,128,.12)"];
+
+/* ── DEFAULT BAR ── */
+function renderDefaultBarChart(){
+  const parts = Object.keys(EVALUATING_EXAM);
+
+  const achieved = parts.map(p => {
+    const score = effScore(p).score ?? 0;
+    const weight = EVALUATING_EXAM[p].weight;
+    return Math.round((score * weight / 100) * 10) / 10;
+  });
+
+  const remaining = parts.map((p, i) => {
+    const weight = EVALUATING_EXAM[p].weight;
+    return Math.max(0, Math.round((weight - achieved[i]) * 10) / 10);
+  });
+
+  mkChart("defaultBarChart", {
+    type: "bar",
+    data: {
+      labels: parts.map(p => `${p.split(":")[0]} (${EVALUATING_EXAM[p].weight}%)`),
+      datasets: [
+        {
+          label: "Earned toward final grade",
+          data: achieved,
+          backgroundColor: PC,
+          borderRadius: 8,
+          borderWidth: 0
+        },
+        {
+          label: "Remaining in section",
+          data: remaining,
+          backgroundColor: PL,
+          borderRadius: 8,
+          borderWidth: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: "#64748b",
+            font: { size: 12 }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context){
+              return `${context.dataset.label}: ${context.raw}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: { color: "#64748b" },
+          grid: { display: false }
+        },
+        y: {
+          stacked: true,
+          min: 0,
+          max: 55,
+          ticks: { color: "#64748b", stepSize: 5 },
+          grid: { color: "rgba(15,23,42,.05)" },
+          title: {
+            display: true,
+            text: "Contribution to final grade (%)",
+            color: "#64748b"
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ── PART VIEW ── */
+function renderPartView(){
+  const panel=document.getElementById("partOnlyPanel");
+  const snap=document.getElementById("partSnapshotPanel");
+  if(!state.selectedPart||!panel||!snap)return;
+  const w=EVALUATING_EXAM[state.selectedPart].weight;
+  const eff=effScore(state.selectedPart);
+  const curEx=state.partExamScores[state.selectedPart]??"";
+
+  panel.innerHTML=`
+    <div class="part-banner">
+      <div><strong>${xe(state.selectedPart)}</strong><span>Weight in final grade: ${w}%</span></div>
+      <div class="part-chip">${w}% section</div>
+    </div>
+    <div class="metric-row">
+      <div><strong>Part score so far</strong><br><span style="color:var(--muted);font-size:.86rem;">Based on all latest chapter quiz results</span></div>
+      <div class="metric-pill">
+        ${eff.progress.percent!==null ? `${eff.progress.earned}/${eff.progress.possible} (${eff.progress.percent}%)` : "—"}
+      </div>
+    </div>
+    <div style="margin-top:18px;">
+      <label class="subtle-label" for="partExamInput">Main part exam score</label>
+      <div class="row">
+        <div><input id="partExamInput" type="number" min="0" max="100" placeholder="Enter overall part exam score" value="${curEx}"></div>
+        <div style="flex:0 0 auto;min-width:auto;"><button class="primary-btn" id="savePartExamBtn">Save Score</button></div>
+      </div>
+    </div>
+  `;
+
+  snap.innerHTML=`
+    <div class="metric-row">
+      <div><strong>Chapters scored</strong><br><span style="color:var(--muted);font-size:.86rem;">Inside this part</span></div>
+      <div class="metric-pill">${eff.progress.done}/${eff.progress.total}</div>
+    </div>
+    <div class="metric-row">
+      <div><strong>Chapter average</strong><br><span style="color:var(--muted);font-size:.86rem;">Scored chapters only</span></div>
+      <div class="metric-pill">${eff.progress.avg!==null?`${eff.progress.avg}%`:"—"}</div>
+    </div>
+    <div class="metric-row">
+      <div><strong>Selected chapter</strong><br><span style="color:var(--muted);font-size:.86rem;">Choose one from the dropdown to log attempts</span></div>
+      <div class="metric-pill" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">
+        ${state.selectedChapter?xe(trunc(state.selectedChapter,22)):"None selected"}
+      </div>
+    </div>
+  `;
+
+  document.getElementById("savePartExamBtn").addEventListener("click",()=>{
+    const v=clamp(document.getElementById("partExamInput").value);
+    if(v===null){state.partExamScores[state.selectedPart]=null;setStatus("Part exam score cleared");}
+    else{state.partExamScores[state.selectedPart]=v;
+saveState();setStatus("Part exam score saved");}
+    renderPartView();
+    destroyChart("defaultBarChart"); renderDefaultBarChart();
+  });
+}
+
+/* ── CHAPTER VIEW ── */
+function renderChapterView(){
+  const lp=document.getElementById("chapterPartPanel");
+  const rp=document.getElementById("chapterOnlyPanel");
+  if(!state.selectedPart||!lp||!rp)return;
+  const eff=effScore(state.selectedPart);
+  const attempts=state.selectedChapter?(state.chapterAttempts[chKey(state.selectedPart,state.selectedChapter)]||[]):[];
+
+  lp.innerHTML=`
+    <div class="part-banner">
+      <div><strong>${xe(state.selectedPart)}</strong><span>Section estimate &amp; saved part exam score</span></div>
+      <div class="part-chip">${EVALUATING_EXAM[state.selectedPart].weight}%</div>
+    </div>
+    <div class="metric-row">
+      <div><strong>Current grade</strong><br><span style="color:var(--muted);font-size:.86rem;">Using ${xe(eff.source)}</span></div>
+      <div class="metric-pill">${eff.score!==null?`${eff.score}%`:"—"}</div>
+    </div>
+    <div class="metric-row">
+      <div><strong>Part exam score</strong><br><span style="color:var(--muted);font-size:.86rem;">Saved overall score</span></div>
+      <div class="metric-pill">${state.partExamScores[state.selectedPart]!=null?`${state.partExamScores[state.selectedPart]}%`:"Not entered"}</div>
+    </div>
+    <div class="metric-row">
+      <div><strong>Chapters scored</strong><br><span style="color:var(--muted);font-size:.86rem;">Coverage in this part</span></div>
+      <div class="metric-pill">${eff.progress.done}/${eff.progress.total}</div>
+    </div>
+  `;
+
+   rp.innerHTML=`
+    <div class="part-banner">
+      <div><strong style="font-size:.92rem;">${xe(trunc(state.selectedChapter,42))}</strong><span>Each entry becomes a numbered attempt.</span></div>
+      <div class="part-chip">${attempts.length} attempt${attempts.length===1?"":"s"}</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label class="subtle-label" for="chapterEarnedInput">Score earned</label>
+        <input id="chapterEarnedInput" type="number" min="0" step="1" placeholder="e.g. 3">
+      </div>
+      <div>
+        <label class="subtle-label" for="chapterPossibleInput">Out of</label>
+        <input id="chapterPossibleInput" type="number" min="1" step="1" placeholder="e.g. 5">
+      </div>
+      <div style="flex:0 0 auto;min-width:auto;">
+        <button class="primary-btn" id="addChapterAttemptBtn">Add Attempt</button>
+      </div>
+    </div>
+
+    <div class="attempt-box">
+      <div class="subtle-label">Attempt history</div>
+      <div id="attemptHistoryList">
+        ${attempts.length
+          ? [...attempts].reverse().map((item,ri)=>`
+            <div class="attempt-item">
+              <div>
+                <strong>${xe(item.label)}</strong>
+                ${ri===0?'<span style="margin-left:6px;font-size:.74rem;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;padding:2px 7px;border-radius:6px;font-weight:700">Latest</span>':""}
+                <br><span style="color:var(--muted);font-size:.82rem;">${xe(item.timestamp)}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div class="metric-pill">${item.earned}/${item.possible} • ${item.score}%</div>
+                <button onclick="deleteAttempt(${attempts.length-1-ri})"
+                  style="border:none;background:none;cursor:pointer;color:#94a3b8;font-size:1rem;padding:0 4px;line-height:1;transition:.15s"
+                  onmouseover="this.style.color='#e11d48'" onmouseout="this.style.color='#94a3b8'"
+                  title="Delete attempt">✕</button>
+              </div>
+            </div>`).join("")
+          : '<p style="color:var(--muted);font-size:.9rem;line-height:1.6;">No attempts yet for this chapter.</p>'}
+      </div>
+    </div>
+  `;
+
+  document.getElementById("addChapterAttemptBtn").addEventListener("click",()=>{
+    const earned = parseInt(document.getElementById("chapterEarnedInput").value,10);
+    const possible = parseInt(document.getElementById("chapterPossibleInput").value,10);
+
+    if(isNaN(earned) || isNaN(possible)){
+      setStatus("Enter valid numbers");
+      return;
+    }
+    if(possible <= 0){
+      setStatus("Total must be greater than 0");
+      return;
+    }
+    if(earned < 0 || earned > possible){
+      setStatus("Score earned must be between 0 and total");
+      return;
+    }
+
+    const percent = Math.round((earned / possible) * 1000) / 10;
+
+    const key = chKey(state.selectedPart,state.selectedChapter);
+    if(!state.chapterAttempts[key]) state.chapterAttempts[key] = [];
+
+    const n = state.chapterAttempts[key].length + 1;
+
+    const entry = {
+      part: state.selectedPart,
+      chapter: state.selectedChapter,
+      label: `Attempt ${n}`,
+      earned,
+      possible,
+      score: percent,
+      timestamp: new Date().toLocaleString()
+    };
+
+    state.chapterAttempts[key].push(entry);
+    state.attemptTimeline.push(entry);
+    saveState();
+
+    setStatus("Attempt added");
+    renderChapterView();
+    destroyChart("defaultBarChart");
+    renderDefaultBarChart();
+  });
+}
+
+window.deleteAttempt=function(idx){
+  const key=chKey(state.selectedPart,state.selectedChapter);
+  if(!state.chapterAttempts[key])return;
+  const removed=state.chapterAttempts[key][idx];
+  state.chapterAttempts[key].splice(idx,1);
+  const ti = state.attemptTimeline.findLastIndex(t =>
+  t.part === removed.part &&
+  t.chapter === removed.chapter &&
+  t.score === removed.score &&
+  t.earned === removed.earned &&
+  t.possible === removed.possible
+);
+ if(ti>=0)state.attemptTimeline.splice(ti,1);
+  setStatus("Attempt deleted");
+  renderChapterView();
+  destroyChart("defaultBarChart"); renderDefaultBarChart();
+};
+
+/* ── RESULTS VIEW ── */
+function renderResultsView(){
+  renderResultsMetrics();
+  renderSectionBarChart();
+  renderTrendLineChart();
+  renderProgressBarChart();
+  renderChapterAvgChart();
+  renderDonuts();
+  renderNotice();
+  renderStrongParts();
+}
+
+function renderResultsMetrics(){
+  const wg = weightedGrade();
+  const proj = projected();
+
+  const strongest = Object.keys(EVALUATING_EXAM)
+    .map(p => ({ p, s: effScore(p).score ?? 0 }))
+    .sort((a,b)=>b.s-a.s)[0];
+
+  document.getElementById("resultsMetrics").innerHTML = `
+    <div class="card" style="text-align:center">
+      <div class="card-title">${proj}%</div>
+      <div class="card-sub" style="margin-bottom:0">Current overall grade</div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <div class="card-title">${proj}%</div>
+      <div class="card-sub" style="margin-bottom:0">Projected full grade</div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <div class="card-title">${wg.coverage}%</div>
+      <div class="card-sub" style="margin-bottom:0">Grade coverage</div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <div class="card-title">${state.attemptTimeline.length}</div>
+      <div class="card-sub" style="margin-bottom:0">Total attempts</div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <div class="card-title">${strongest && strongest.s ? `${strongest.s}%` : "—"}</div>
+      <div class="card-sub" style="margin-bottom:0">Top section score</div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <div class="card-title">${strongest ? xe(strongest.p.split(":")[0].trim()) : "—"}</div>
+      <div class="card-sub" style="margin-bottom:0">Best section</div>
+    </div>
+  `;
+}
+
+function renderSectionBarChart(){
+  const parts=Object.keys(EVALUATING_EXAM);
+  mkChart("sectionBarChart",{
+    type:"bar",
+    data:{labels:parts.map(p=>p.replace(/^Part \d+: /,"").slice(0,22)),datasets:[{label:"Score",data:parts.map(p=>effScore(p).score??0),backgroundColor:PC,borderRadius:8,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}}
+  });
+}
+
+function renderTrendLineChart(){
+  const tl=state.attemptTimeline;
+  mkChart("trendLineChart",{
+    type:"line",
+    data:{labels:tl.map((_,i)=>`#${i+1}`),datasets:[{label:"Score",data:tl.map(t=>t.score),borderColor:"#111827",backgroundColor:"rgba(17,24,39,.06)",tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:"#111827",borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b",maxTicksLimit:10},grid:{display:false}}}}
+  });
+}
+
+function renderProgressBarChart(){
+  const parts=Object.keys(EVALUATING_EXAM);
+  const pcts=parts.map(p=>{const pr=partProgress(p);return pr.total?Math.round(pr.done/pr.total*100):0;});
+  mkChart("progressBarChart",{
+    type:"bar",
+    data:{
+      labels:parts.map(p=>p.split(":")[0].trim()),
+      datasets:[
+        {label:"Completed",data:pcts,backgroundColor:PC,borderRadius:6,borderWidth:0},
+        {label:"Remaining",data:pcts.map(v=>100-v),backgroundColor:PL,borderRadius:6,borderWidth:0}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
+      plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},
+      scales:{
+        x:{stacked:true,min:0,max:100,ticks:{stepSize:25,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},
+        y:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function renderChapterAvgChart(){
+  const parts=Object.keys(EVALUATING_EXAM);
+  mkChart("chapterAvgChart",{
+    type:"doughnut",
+    data:{labels:parts.map(p=>p.split(":")[0].trim()),datasets:[{data:parts.map(p=>effScore(p).score??0),backgroundColor:PC,borderColor:"#fff",borderWidth:3,hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom",labels:{color:"#64748b",font:{size:12},padding:14}}}}
+  });
+}
+
+function renderDonuts(){
+  const wg=weightedGrade();
+  const proj=projected();
+  const avg=state.attemptTimeline.length?Math.round(state.attemptTimeline.reduce((s,i)=>s+i.score,0)/state.attemptTimeline.length*10)/10:0;
+  document.getElementById("donutWrap").innerHTML=[
+    [wg.score??0,"Current","Current weighted grade"],
+    [wg.coverage,"Coverage","Assessment coverage"],
+    [proj,"Projected","Projected final grade"],
+    [avg,"Avg Attempt","Average attempt score"]
+  ].map(([p,l,cap])=>`<div class="donut-card">${svgDonut(p,l)}<div class="donut-label">${cap}</div></div>`).join("");
+}
+
+function svgDonut(pct,label){
+  const r=54,c=2*Math.PI*r,safe=Math.max(0,Math.min(100,Number(pct)||0)),offset=c-(safe/100)*c;
+  return`<svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="${label} ${safe}%">
+    <circle cx="75" cy="75" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+    <circle cx="75" cy="75" r="${r}" fill="none" stroke="#111827" stroke-width="12" stroke-linecap="round"
+      stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 75 75)"/>
+    <text x="75" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#0f172a">${safe}%</text>
+    <text x="75" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#64748b">${label}</text>
+  </svg>`;
+}
+
+function renderNotice(){
+  const wg=weightedGrade();
+  const parts=Object.keys(EVALUATING_EXAM);
+  const missing=parts.filter(p=>effScore(p).score===null);
+  const partial=parts.filter(p=>{const e=effScore(p);return e.score!==null&&e.progress.done<e.progress.total&&state.partExamScores[p]==null;});
+  let html="Your results are based on the scores entered so far.";
+  if(wg.coverage<100)html+=` <br><br>Current weighted coverage is <strong>${wg.coverage}%</strong>.`;
+  if(missing.length)html+=` <br><br>Still missing data for: <strong>${missing.map(xe).join(", ")}</strong>.`;
+  if(partial.length)html+=` <br><br>Building chapter coverage in: <strong>${partial.map(p=>`${xe(p)} (${partProgress(p).done}/${partProgress(p).total})`).join(", ")}</strong>.`;
+  if(!missing.length&&!partial.length)html+=" <br><br>You have coverage across all major parts — great work!";
+  document.getElementById("completionNotice").innerHTML=html;
+}
+
+function renderStrongParts(){
+  const ranked=Object.keys(EVALUATING_EXAM).map(p=>{
+    const e=effScore(p);
+    return{part:p,score:e.score??0,source:e.source,done:e.progress.done,total:e.progress.total};
+  }).sort((a,b)=>b.score-a.score);
+  document.getElementById("strongPartsList").innerHTML=ranked.map(item=>`
+    <div class="strong-item">
+      <strong>${xe(item.part)}</strong>
+      <div style="color:var(--muted);font-size:.9rem;line-height:1.6;margin-top:4px;">
+        Score: <strong style="color:var(--text)">${item.score}%</strong> &nbsp;·&nbsp;
+        Source: ${xe(item.source)} &nbsp;·&nbsp;
+        Progress: ${item.done}/${item.total} chapters
+      </div>
+    </div>`).join("");
+}
+
+/* ── INIT ── */
+loadState();
+renderDefaultBarChart();
+setStatus("Saved progress loaded");
+</script>
+</body>
+</html>
