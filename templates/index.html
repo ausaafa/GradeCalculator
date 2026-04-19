@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PharmacyPrep – Evaluating Exam Assessment Evaluator</title>
+  <title>PharmacyPrep – Exam Assessment Evaluator</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -23,8 +23,7 @@
     body{
       font-family:'Inter',sans-serif;
       color:var(--text);
-      background:
-        radial-gradient(circle at 20% 20%, rgba(15,23,42,.035), transparent 24%),
+      background:radial-gradient(circle at 20% 20%, rgba(15,23,42,.035), transparent 24%),
         radial-gradient(circle at 80% 30%, rgba(15,23,42,.03), transparent 18%),
         linear-gradient(180deg,#f7f9fb 0%,#eef2f6 100%);
       overflow:hidden;
@@ -39,7 +38,6 @@
       padding:24px 20px 20px;
       display:flex;flex-direction:column;
     }
-    
     .brand h1{font-size:1.95rem;font-weight:800;letter-spacing:-0.04em;margin-bottom:4px}
     .brand p{color:var(--muted);font-size:.92rem}
     .brand-divider{height:1px;margin:18px 0 22px;background:linear-gradient(90deg,rgba(15,23,42,.22),rgba(15,23,42,0))}
@@ -51,40 +49,54 @@
       outline:none;transition:.18s ease;font-family:'Inter',sans-serif;
     }
     .top-back-btn{
-  height:42px;
-  padding:0 14px;
-  border-radius:12px;
-  border:1px solid rgba(15,23,42,.12);
-  background:#fff;
-  color:#111827;
-  font-weight:800;
-  font-size:.92rem;
-  cursor:pointer;
-  transition:.18s ease;
-  font-family:'Inter',sans-serif;
-}
-.top-back-btn:hover{
-  background:#f8fafc;
-  transform:translateY(-1px);
-}
+      height:42px;padding:0 14px;border-radius:12px;border:1px solid rgba(15,23,42,.12);
+      background:#fff;color:#111827;font-weight:800;font-size:.92rem;cursor:pointer;
+      transition:.18s ease;font-family:'Inter',sans-serif;
+    }
+    .top-back-btn:hover{background:#f8fafc;transform:translateY(-1px)}
     select:hover,select:focus,input[type="number"]:focus{border-color:rgba(15,23,42,.35);box-shadow:0 0 0 4px rgba(15,23,42,.05)}
     select:disabled{opacity:.55;cursor:not-allowed}
     .status-chip{min-height:48px;border-radius:12px;border:1px solid rgba(15,23,42,.12);background:#fff;display:flex;align-items:center;padding:0 14px;font-size:.94rem;font-weight:600;color:#111827}
     .status-chip span{margin-right:8px}
-    .sidebar-actions{margin-top:auto;display:grid;gap:10px;padding-top:20px}
-    .side-btn{
-      width:100%;height:56px;border:none;border-radius:12px;
-      background:linear-gradient(180deg,#1f2937,#111827);color:#fff;
-      font-size:1rem;font-weight:800;cursor:pointer;transition:.18s ease;
-      box-shadow:0 8px 18px rgba(15,23,42,.08);font-family:'Inter',sans-serif;
-    }
-    .side-btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,.12)}
-    .side-btn.back-btn{
-      background:linear-gradient(180deg,#fff,#f1f5f9);
-      color:#111827;border:1px solid rgba(15,23,42,.15);
-      box-shadow:none;
-    }
-    .side-btn.back-btn:hover{background:linear-gradient(180deg,#f1f5f9,#e5eaf2)}
+.sidebar-actions{
+  margin-top:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  padding-top:20px;
+  height:100%; /* allows buttons to stretch */
+}
+
+/* ALL buttons same style */
+.side-btn{
+  flex:1; /* makes them expand equally */
+  width:100%;
+  border:none;
+  border-radius:14px;
+  background:#111827; /* uniform dark */
+  color:#fff;
+  font-size:1.05rem;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s ease;
+  box-shadow:0 10px 20px rgba(15,23,42,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* hover effect */
+.side-btn:hover{
+  transform:translateY(-2px);
+  background:#1f2937;
+}
+
+/* REMOVE outline style (force same look) */
+.side-btn.outline-btn{
+  background:#111827;
+  color:#fff;
+  border:none;
+}
     .main-panel{
       flex:1;min-width:0;
       background:linear-gradient(180deg,#fff,#f8fafc);
@@ -150,6 +162,216 @@
     .strong-item{padding:14px 16px;border-radius:14px;background:#fff;border:1px solid rgba(15,23,42,.08)}
     .strong-item strong{display:block;margin-bottom:4px}
     #resultsMetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+
+    /* ── CHAPTER SCORING IMPROVED UI ── */
+    .score-input-group{margin-top:16px}
+    .score-input-group .score-label{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#111827;margin-bottom:10px;display:block}
+    .score-row{display:flex;gap:10px;align-items:stretch}
+    .score-field{flex:1;position:relative}
+    .score-field input{
+      width:100%;height:64px;border-radius:14px;border:2px solid var(--border);
+      background:#fff;color:#111827;padding:0 14px 0 48px;
+      font-size:1.5rem;font-weight:800;outline:none;transition:.2s ease;font-family:'Inter',sans-serif;
+    }
+    .score-field input:focus{border-color:#111827;box-shadow:0 0 0 4px rgba(15,23,42,.07)}
+    .score-field .sf-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--muted);pointer-events:none}
+    .score-divider{display:flex;align-items:center;font-size:1.4rem;font-weight:800;color:var(--muted);padding:0 2px;flex-shrink:0}
+    .out-of-badge{
+      display:flex;align-items:center;justify-content:center;
+      height:64px;padding:0 18px;border-radius:14px;
+      background:#f1f5f9;border:2px solid rgba(15,23,42,.08);
+      font-size:1.5rem;font-weight:800;color:#334155;
+      white-space:nowrap;flex-shrink:0;
+    }
+    .add-btn{
+      height:64px;padding:0 22px;border:none;border-radius:14px;
+      background:#111827;color:#fff;font-size:1rem;font-weight:800;
+      cursor:pointer;transition:.18s ease;font-family:'Inter',sans-serif;
+      white-space:nowrap;flex-shrink:0;
+    }
+    .add-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.15)}
+    .score-hint{margin-top:8px;font-size:.82rem;color:var(--muted);font-weight:600}
+    /* quick-score chips */
+    .quick-scores{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .qs-chip{
+      height:36px;padding:0 14px;border-radius:10px;border:1px solid rgba(15,23,42,.12);
+      background:#fff;color:#111827;font-size:.88rem;font-weight:700;cursor:pointer;
+      transition:.15s ease;font-family:'Inter',sans-serif;
+    }
+    .qs-chip:hover{background:#111827;color:#fff;border-color:#111827}
+    .qs-chip.active{background:#111827;color:#fff;border-color:#111827}
+
+    /* ── SYLLABUS MODAL ── */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(6px);
+      z-index:1000;display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;transition:.2s ease;
+    }
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{
+      background:#fff;border-radius:24px;width:min(680px,92vw);max-height:80vh;
+      display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(15,23,42,.18);
+      transform:translateY(12px);transition:.2s ease;
+    }
+    .modal-overlay.open .modal{transform:translateY(0)}
+    .modal-head{
+      padding:22px 24px 18px;border-bottom:1px solid rgba(15,23,42,.08);
+      display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+    }
+    .modal-head h2{font-size:1.25rem;font-weight:800;letter-spacing:-.03em}
+    .modal-close{
+      width:36px;height:36px;border-radius:10px;border:1px solid rgba(15,23,42,.12);
+      background:#f8fafc;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;
+      justify-content:center;transition:.15s ease;
+    }
+    .modal-close:hover{background:#e5eaf2}
+    .modal-body{overflow-y:auto;padding:20px 24px 24px}
+    .modal-body::-webkit-scrollbar{width:6px}
+    .modal-body::-webkit-scrollbar-thumb{background:rgba(15,23,42,.12);border-radius:999px}
+    .modal-course-select{margin-bottom:20px}
+    .modal-course-select select{height:48px;border-radius:12px}
+    .syl-part{margin-bottom:20px}
+    .syl-part-head{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 14px;border-radius:12px;background:#f8fafc;
+      border:1px solid rgba(15,23,42,.08);margin-bottom:8px;cursor:pointer;
+    }
+    .syl-part-head strong{font-size:.95rem;font-weight:800}
+    .syl-part-head .syl-chip{
+      padding:5px 10px;border-radius:8px;background:#111827;color:#fff;
+      font-size:.76rem;font-weight:800;white-space:nowrap;
+    }
+    .syl-chapters{display:grid;gap:4px;padding:0 4px}
+    .syl-ch{
+      display:flex;align-items:center;gap:10px;padding:8px 12px;
+      border-radius:10px;font-size:.88rem;font-weight:600;color:var(--muted);
+      border:1px solid transparent;transition:.12s ease;
+    }
+    .info-modal-card{
+  background:#fff;
+  width:min(560px,92vw);
+  border-radius:24px;
+  box-shadow:0 30px 80px rgba(15,23,42,.18);
+  border:1px solid rgba(15,23,42,.08);
+  overflow:hidden;
+  transform:translateY(12px);
+  transition:.2s ease;
+}
+
+#infoModal.open .info-modal-card{
+  transform:translateY(0);
+}
+
+.info-modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding:24px 24px 18px;
+  border-bottom:1px solid rgba(15,23,42,.06);
+  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+}
+
+.info-eyebrow{
+  font-size:.74rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#64748b;
+  margin-bottom:6px;
+}
+
+.info-modal-head h2{
+  font-size:1.5rem;
+  font-weight:800;
+  letter-spacing:-.03em;
+  color:#0f172a;
+}
+
+.info-modal-body{
+  padding:22px 24px 24px;
+}
+
+.info-intro{
+  color:#475569;
+  font-size:.98rem;
+  line-height:1.6;
+  margin-bottom:20px;
+}
+
+.info-steps{
+  display:grid;
+  gap:14px;
+}
+
+.info-step{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid rgba(15,23,42,.06);
+}
+
+.info-step:last-child{
+  border-bottom:none;
+}
+
+.info-step-num{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  background:#111827;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.9rem;
+  font-weight:800;
+  flex-shrink:0;
+  box-shadow:0 8px 16px rgba(15,23,42,.12);
+}
+
+.info-step-content{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding-top:2px;
+}
+
+.info-step-content strong{
+  font-size:1rem;
+  font-weight:800;
+  color:#0f172a;
+}
+
+.info-step-content span{
+  font-size:.95rem;
+  line-height:1.55;
+  color:#64748b;
+}
+
+.info-note{
+  margin-top:20px;
+  padding:14px 16px;
+  border-radius:16px;
+  background:#f8fafc;
+  border:1px solid rgba(15,23,42,.08);
+  color:#334155;
+  font-size:.92rem;
+  line-height:1.55;
+}
+
+.info-note strong{
+  color:#0f172a;
+}
+    .syl-ch.done{color:#166534;background:#f0fdf4;border-color:#bbf7d0}
+    .syl-ch .ch-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+    .syl-ch .ch-score{margin-left:auto;font-size:.8rem;font-weight:800;color:#334155}
+    .syl-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;font-size:.82rem;font-weight:700;color:var(--muted)}
+    .syl-legend span{display:flex;align-items:center;gap:6px}
+    .syl-progress-bar{height:6px;border-radius:99px;background:#e2e8f0;margin-top:6px;overflow:hidden}
+    .syl-progress-fill{height:100%;background:#111827;border-radius:99px;transition:.3s ease}
+
     @media(max-width:1200px){
       body{overflow:auto}
       .app-shell{flex-direction:column;height:auto;min-height:100vh}
@@ -160,26 +382,110 @@
   </style>
 </head>
 <body>
-<div class="app-shell">
 
+<!-- SYLLABUS MODAL -->
+<div class="modal-overlay" id="syllabusModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>📋 Syllabus</h2>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-course-select">
+        <select id="sylCourseSelect"></select>
+      </div>
+      <div class="syl-legend">
+        <span><span style="width:10px;height:10px;border-radius:50%;background:#166534;display:inline-block"></span>Attempted</span>
+        <span><span style="width:10px;height:10px;border-radius:50%;background:#cbd5e1;display:inline-block"></span>Not started</span>
+      </div>
+      <div id="sylContent"></div>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="infoModal">
+  <div class="info-modal-card">
+    <div class="info-modal-head">
+      <div>
+        <div class="info-eyebrow">Quick guide</div>
+        <h2>How it works</h2>
+      </div>
+      <button class="modal-close" id="infoModalClose">✕</button>
+    </div>
+
+    <div class="info-modal-body">
+      <p class="info-intro">
+        Track your course progress by saving part exam scores and chapter quiz attempts.
+      </p>
+
+      <div class="info-steps">
+        <div class="info-step">
+          <div class="info-step-num">1</div>
+          <div class="info-step-content">
+            <strong>Select a course</strong>
+            <span>Choose your exam track to load its parts and chapters.</span>
+          </div>
+        </div>
+
+        <div class="info-step">
+          <div class="info-step-num">2</div>
+          <div class="info-step-content">
+            <strong>Select a part</strong>
+            <span>Open a part to view its overview, progress, and saved score.</span>
+          </div>
+        </div>
+
+        <div class="info-step">
+          <div class="info-step-num">3</div>
+          <div class="info-step-content">
+            <strong>Add your part exam score</strong>
+            <span>Save your main part score to reflect your overall performance in that section.</span>
+          </div>
+        </div>
+
+        <div class="info-step">
+          <div class="info-step-num">4</div>
+          <div class="info-step-content">
+            <strong>Select a chapter</strong>
+            <span>Log quiz attempts for a chapter using scores out of 10.</span>
+          </div>
+        </div>
+
+        <div class="info-step">
+          <div class="info-step-num">5</div>
+          <div class="info-step-content">
+            <strong>View results</strong>
+            <span>See your weighted grade, completion progress, and performance trend.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-note">
+        <strong>Reset:</strong> Clears your current selections only. Your saved grades stay saved.
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="app-shell">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark"></div>
       <h1>PharmacyPrep</h1>
-      <p>evaluating exam assessment evaluator</p>
+      <p>Exam Assessment Evaluator</p>
       <div class="brand-divider"></div>
     </div>
 
     <div class="field">
       <label>Course</label>
-      <select id="ddCourse"><option selected>Evaluating Exam</option></select>
+      <select id="ddCourse">
+  <option value="" selected>Select course</option>
+</select>
     </div>
-
     <div class="field">
-      <label for="ddPart">Part</label>
-      <select id="ddPart"><option disabled selected>Select Part</option></select>
+      <label for="ddPart" id="partLabel">Part</label>
+      <select id="ddPart" disabled>
+  <option value="" selected>Select Part</option>
+</select>
     </div>
-
     <div class="field">
       <label for="ddChapter">Chapter</label>
       <select id="ddChapter" disabled><option disabled selected>Select Chapter</option></select>
@@ -187,20 +493,21 @@
 
     <div class="status-chip" id="status"><span>●</span>&nbsp;Default page loaded</div>
 
-<div class="sidebar-actions">
-  <button class="side-btn" id="viewResultsBtn">View Results</button>
-  <button class="side-btn" id="infoBtn">Info</button>
-</div>
+    <div class="sidebar-actions">
+      <button class="side-btn" id="viewResultsBtn">View Results</button>
+      <button class="side-btn outline-btn" id="resetBtn">Reset</button>
+      <button class="side-btn outline-btn" id="infoBtn">Info</button>
+    </div>
   </aside>
 
   <main class="main-panel">
-  <div class="main-topbar">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <button class="top-back-btn" id="backBtn" style="display:none">← Back</button>
-    <div class="top-pill" id="topPillLeft">Evaluating Exam only</div>
-  </div>
-  <div class="top-pill">Weighted grading: 25 / 55 / 20</div>
-</div>
+    <div class="main-topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="top-back-btn" id="backBtn" style="display:none">← Back</button>
+        <div class="top-pill" id="topPillLeft">Select a course</div>
+      </div>
+      <div class="top-pill" id="weightingPill">Weighted grading</div>
+    </div>
 
     <div class="main-scroll">
 
@@ -209,14 +516,11 @@
         <div class="hero">
           <div class="hero-inner">
             <div class="hero-mark"></div>
-            <h2>Evaluating Exam Dashboard</h2>
-            <p>
-              Start by selecting a part. Select a part to enter your main exam score.
-              Select a chapter to log individual attempts. Click <strong>View Results</strong> any time for your full weighted grade.
-            </p>
+            <h2>Exam Assessment Dashboard</h2>
+            <p>Select a course and part to get started. Enter your main exam score per part, or log individual chapter attempts. Click <strong>View Results</strong> for your full weighted grade.</p>
             <div class="card" style="margin-top:24px;text-align:left;">
-<div class="card-title">Grade breakdown</div>
-<div class="card-sub">Shows how much each weighted section is currently contributing to your final grade, plus what remains.</div>
+              <div class="card-title">Grade breakdown</div>
+              <div class="card-sub">How much each weighted section is contributing to your final grade.</div>
               <div class="chart-wrap sm"><canvas id="defaultBarChart"></canvas></div>
             </div>
           </div>
@@ -266,113 +570,263 @@
             <div class="notice" id="completionNotice"></div>
           </div>
           <div class="results-grid">
-            <div class="chart-card">
-              <h3>Part performance</h3>
-              <p>Which parts you are doing best in right now.</p>
-              <div class="chart-wrap md"><canvas id="sectionBarChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-              <h3>Improvement trend</h3>
-              <p>Trend from all chapter attempts in the order entered.</p>
-              <div class="chart-wrap md"><canvas id="trendLineChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-              <h3>Chapter completion</h3>
-              <p>How much of each part you have scored so far.</p>
-              <div class="chart-wrap md"><canvas id="progressBarChart"></canvas></div>
-            </div>
-            <div class="chart-card">
-              <h3>Score source</h3>
-              <p>Effective score per part — part exam if saved, otherwise chapter average.</p>
-              <div class="chart-wrap md"><canvas id="chapterAvgChart"></canvas></div>
-            </div>
+            <div class="chart-card"><h3>Part performance</h3><p>Which parts you are doing best in right now.</p><div class="chart-wrap md"><canvas id="sectionBarChart"></canvas></div></div>
+            <div class="chart-card"><h3>Improvement trend</h3><p>Trend from all chapter attempts in the order entered.</p><div class="chart-wrap md"><canvas id="trendLineChart"></canvas></div></div>
+            <div class="chart-card"><h3>Chapter completion</h3><p>How much of each part you have scored so far.</p><div class="chart-wrap md"><canvas id="progressBarChart"></canvas></div></div>
+            <div class="chart-card"><h3>Score source</h3><p>Effective score per part — part exam if saved, otherwise chapter average.</p><div class="chart-wrap md"><canvas id="chapterAvgChart"></canvas></div></div>
           </div>
           <div class="card">
             <div class="card-title">Strongest parts so far</div>
-            <div class="card-sub">Ordered from strongest current section to weakest.</div>
+            <div class="card-sub">Ordered from strongest to weakest.</div>
             <div class="strong-list" id="strongPartsList"></div>
           </div>
         </div>
-
-</div>
       </section>
-
     </div>
   </main>
 </div>
 
 <script>
-const EVALUATING_EXAM = {
-  "Part 1: Pharmaceutical Sciences":{weight:25,chapters:["Abbreviation and Terminology","Chapter 1 Pharmacokinetics","Chapter 2 Biopharmaceutics","Chapter 3 Drug Metabolism and Pharmacogenetics","Chapter 4 Drug Receptors and Affecting Neurotransmitters","Chapter 5 Pharmacodynamics","Chapter 6 Therapeutic Drug Classes","Chapter 7 Pharmacology of Autonomic Nervous System Drugs","Chapter 8 Pharmacology of Histamines, Serotonin, and Prostaglandin","Chapter 9 Pharmacology of Cardiovascular Drugs","Chapter 10 Pharmacology of Psychiatric & Neurological Drugs","Chapter 11 Pharmacology of Endocrine Drugs","Chapter 12 Pharmacology of Respiratory Drugs","Chapter 13 Pharmacology of Musculoskeletal Drugs","Chapter 14 Pharmacology of Antimicrobial Drugs","Chapter 15 Pharmacology of Oncology Drugs","Chapter 16 Pharmacology of Gastrointestinal Drugs","Chapter 17 Pharmacology of Analgesics","Chapter 18 Pharmacology of Anesthetics","Chapter 19 Biotechnology and Pharmacogenetics","Chapter 20 Immunology and Immunizations","Chapter 21 Toxicology","Chapter 22 Physical Pharmacy and Drug Stability","Chapter 23 Pharmaceutics and Dosage Forms","Chapter 24 Pharmaceutical Excipient","Chapter 25 Drug Delivery Systems"]},
-  "Part 2: Pharmacy Practice":{weight:55,chapters:["Chapter 26 Medication Administration","Chapter 27 Sig Codes and Directions","Chapter 28 Basic Pharmacy Math","Chapter 29 Dosage Calculation","Chapter 30 Dilutions and Concentration","Chapter 31 Electrolyte Solutions","Chapter 32 Dosing Calculations for Parenteral Medications","Chapter 33 Compounding Non-Sterile and Sterile Preps","Chapter 34 Clinical Biochemistry and Diagnostic Testing","Chapter 35 Patient Care Process","Chapter 36 Safety of Medications in Special Populations","Chapter 37 Adverse Drug Reactions and Management","Chapter 38 Drug Interactions","Chapter 39 OTC and Prescription Drugs for Dermatological and Foot Conditions","Chapter 40 OTC and Prescription Drugs for Ophthalmic, Ear and Mouth Disorders","Chapter 41 OTC Drugs Antihistamine, Decongestants, Antitussives, Expectorants","Chapter 42 OTC Drugs for Nausea, Vomiting, Constipation, Diarrhea, Hemorrhoids","Chapter 43 Analgesics, and Topical Pain Relievers","Chapter 44 Asthma and Chronic Obstructive Pulmonary Disease","Chapter 45 Gastrointestinal Disorders","Chapter 46 Diabetes Mellitus","Chapter 47 Endocrine Disorders","Chapter 48 Gynaecologic and Genitourinary Disorders","Chapter 49 Urologic Disorders","Chapter 50 Rheumatoid Arthritis, Osteoarthritis and Gout Arthritis","Chapter 51 Osteoporosis","Chapter 52 Hypertension","Chapter 53 Coronary Artery Diseases","Chapter 54 Stroke","Chapter 55 Congestive Heart Failure","Chapter 56 Cardiac Arrhythmias","Chapter 57 Peripheral Vascular Diseases","Chapter 58 Pain Management","Chapter 59 Anxiety Disorder","Chapter 60 Depression","Chapter 61 Psychosis and Schizophrenia","Chapter 62 Dementia","Chapter 63 Seizures and Epilepsy","Chapter 64 Parkinson's Disease","Chapter 65 Infectious Disease","Chapter 66 Clinical Pharmacokinetics","Chapter 67 Hematological Disorders","Chapter 68 Renal Diseases","Chapter 69 Chronic Liver Diseases","Chapter 70 Substance Abuse Disorders & Smoking Cessation","Chapter 71 Sleep Related Disorders","Chapter 72 Nutrition and Obesity","Chapter 73 Immunologic Disorders","Chapter 74 Carcinogenesis and Neoplasia","Chapter 75 Vitamins and Supplements"]},
-  "Part 3: Social / Behavioural / Administrative Sciences":{weight:20,chapters:["Chapter 76 Canadian Healthcare System, Health Equity and Social Determinants of Health","Chapter 77 Professionalism and Ethics","Chapter 78 Professional Pharmacy Communication Skills","Chapter 79 Collaboration and Teamwork","Chapter 80 Drug Information Resources and Literature Evaluation","Chapter 81 Medication Errors and Patient Safety Practices","Chapter 82 Health Promotion and Disease Prevention","Chapter 83 Canadian Pharmacy Law and Jurisprudence","Chapter 84 Pharmacist Scope of Practice in Canada","Chapter 85 Pharmacy Management","Chapter 86 The New Drug Approval Process","Chapter 87 Pharmacoeconomics","Chapter 88 Pharmacoepidemiology","Chapter 89 Biostatistics","Chapter 90 Hospital Pharmacy"]}
+// ── COURSE DATA ──────────────────────────────────────────────────────────────
+
+const COURSES = {
+  "Evaluating Exam": {
+    partLabel: "Part",
+    parts: {
+      "Part 1: Pharmaceutical Sciences":{weight:25,chapters:["Abbreviation and Terminology","Chapter 1 Pharmacokinetics","Chapter 2 Biopharmaceutics","Chapter 3 Drug Metabolism and Pharmacogenetics","Chapter 4 Drug Receptors and Affecting Neurotransmitters","Chapter 5 Pharmacodynamics","Chapter 6 Therapeutic Drug Classes","Chapter 7 Pharmacology of Autonomic Nervous System Drugs","Chapter 8 Pharmacology of Histamines, Serotonin, and Prostaglandin","Chapter 9 Pharmacology of Cardiovascular Drugs","Chapter 10 Pharmacology of Psychiatric & Neurological Drugs","Chapter 11 Pharmacology of Endocrine Drugs","Chapter 12 Pharmacology of Respiratory Drugs","Chapter 13 Pharmacology of Musculoskeletal Drugs","Chapter 14 Pharmacology of Antimicrobial Drugs","Chapter 15 Pharmacology of Oncology Drugs","Chapter 16 Pharmacology of Gastrointestinal Drugs","Chapter 17 Pharmacology of Analgesics","Chapter 18 Pharmacology of Anesthetics","Chapter 19 Biotechnology and Pharmacogenetics","Chapter 20 Immunology and Immunizations","Chapter 21 Toxicology","Chapter 22 Physical Pharmacy and Drug Stability","Chapter 23 Pharmaceutics and Dosage Forms","Chapter 24 Pharmaceutical Excipient","Chapter 25 Drug Delivery Systems"]},
+      "Part 2: Pharmacy Practice":{weight:55,chapters:["Chapter 26 Medication Administration","Chapter 27 Sig Codes and Directions","Chapter 28 Basic Pharmacy Math","Chapter 29 Dosage Calculation","Chapter 30 Dilutions and Concentration","Chapter 31 Electrolyte Solutions","Chapter 32 Dosing Calculations for Parenteral Medications","Chapter 33 Compounding Non-Sterile and Sterile Preps","Chapter 34 Clinical Biochemistry and Diagnostic Testing","Chapter 35 Patient Care Process","Chapter 36 Safety of Medications in Special Populations","Chapter 37 Adverse Drug Reactions and Management","Chapter 38 Drug Interactions","Chapter 39 OTC and Prescription Drugs for Dermatological and Foot Conditions","Chapter 40 OTC and Prescription Drugs for Ophthalmic, Ear and Mouth Disorders","Chapter 41 OTC Drugs Antihistamine, Decongestants, Antitussives, Expectorants","Chapter 42 OTC Drugs for Nausea, Vomiting, Constipation, Diarrhea, Hemorrhoids","Chapter 43 Analgesics, and Topical Pain Relievers","Chapter 44 Asthma and Chronic Obstructive Pulmonary Disease","Chapter 45 Gastrointestinal Disorders","Chapter 46 Diabetes Mellitus","Chapter 47 Endocrine Disorders","Chapter 48 Gynaecologic and Genitourinary Disorders","Chapter 49 Urologic Disorders","Chapter 50 Rheumatoid Arthritis, Osteoarthritis and Gout Arthritis","Chapter 51 Osteoporosis","Chapter 52 Hypertension","Chapter 53 Coronary Artery Diseases","Chapter 54 Stroke","Chapter 55 Congestive Heart Failure","Chapter 56 Cardiac Arrhythmias","Chapter 57 Peripheral Vascular Diseases","Chapter 58 Pain Management","Chapter 59 Anxiety Disorder","Chapter 60 Depression","Chapter 61 Psychosis and Schizophrenia","Chapter 62 Dementia","Chapter 63 Seizures and Epilepsy","Chapter 64 Parkinson's Disease","Chapter 65 Infectious Disease","Chapter 66 Clinical Pharmacokinetics","Chapter 67 Hematological Disorders","Chapter 68 Renal Diseases","Chapter 69 Chronic Liver Diseases","Chapter 70 Substance Abuse Disorders & Smoking Cessation","Chapter 71 Sleep Related Disorders","Chapter 72 Nutrition and Obesity","Chapter 73 Immunologic Disorders","Chapter 74 Carcinogenesis and Neoplasia","Chapter 75 Vitamins and Supplements"]},
+      "Part 3: Social / Behavioural / Administrative Sciences":{weight:20,chapters:["Chapter 76 Canadian Healthcare System, Health Equity and Social Determinants of Health","Chapter 77 Professionalism and Ethics","Chapter 78 Professional Pharmacy Communication Skills","Chapter 79 Collaboration and Teamwork","Chapter 80 Drug Information Resources and Literature Evaluation","Chapter 81 Medication Errors and Patient Safety Practices","Chapter 82 Health Promotion and Disease Prevention","Chapter 83 Canadian Pharmacy Law and Jurisprudence","Chapter 84 Pharmacist Scope of Practice in Canada","Chapter 85 Pharmacy Management","Chapter 86 The New Drug Approval Process","Chapter 87 Pharmacoeconomics","Chapter 88 Pharmacoepidemiology","Chapter 89 Biostatistics","Chapter 90 Hospital Pharmacy"]}
+    }
+  },
+  "FPGEE Question Bank & Mock Exams": {
+    partLabel: "Part",
+    parts: {
+      "Part 1: FPGEE Biomedical Sciences":{weight:25,chapters:["Chapter 1 Pharmacokinetics","Chapter 2 Biopharmaceutics","Chapter 3 Drug Metabolism and Pharmacogenetics","Chapter 4 Drug Receptors and Affecting Neurotransmitters","Chapter 5 Pharmacodynamics","Chapter 6 Therapeutic Drug Classes","Chapter 7 Pharmacology of Autonomic Nervous System Drugs","Chapter 8 Pharmacology of Histamines, Serotonin, and Prostaglandin","Chapter 9 Pharmacology of Cardiovascular Drugs","Chapter 10 Pharmacology of Psychiatric & Neurological Drugs","Chapter 11 Pharmacology of Endocrine Drugs","Chapter 12 Pharmacology of Respiratory Drugs","Chapter 13 Pharmacology of Musculoskeletal Drugs","Chapter 14 Pharmacology of Antimicrobial Drugs","Chapter 15 Pharmacology of Oncology Drugs","Chapter 16 Pharmacology of Gastrointestinal drugs","Chapter 17 Pharmacology of Analgesics","Chapter 18 Pharmacology of Anesthetics","Chapter 19 Biotechnology and Pharmacogenetics","Chapter 20 Immunology and immunizations","Chapter 21 Toxicology","Chapter 22 Physical Pharmacy and Drug stability","Chapter 23 Pharmaceutics and Dosage Forms","Chapter 24 Pharmaceutical Excipient","Chapter 25 Drug Delivery Systems"]},
+      "Part 2: FPGEE Pharmaceutical Sciences":{weight:25,chapters:["Chapter 9 Sig Codes and Directions (FPGEE)","Chapter 10 Pharmaceutical Calculations Basic Math (FPGEE)","Chapter 11 Dilutions and Concentrations (FPGEE)","Chapter 12 Dosage Calculations (FPGEE)","Chapter 13 Parenteral Dosage Calculations (FPGEE)","Chapter 14 Electrolyte Solutions (FPGEE)","Chapter 15 Pharmacokinetics (FPGEE)","Chapter 16 Biopharmaceutics (FPGEE)","Chapter 17 Drug Receptors and Affecting neurotransmitter (FPGEE)","Chapter 18 Pharmacodynamics (FPGEE)","Chapter 19 Basics of Medicinal Chemistry (FPGEE)","Chapter 20 Therapeutic Drug Classification (FPGEE)","Chapter 21 Pharmacology of Autonomic Nervous System Drugs (FPGEE)","Chapter 22 Pharmacology of Histamines, Serotonin, and Prostaglandin (FPGEE)","Chapter 23 Pharmacology of Cardiovascular Drugs (FPGEE)","Chapter 24 Pharmacology of Psychiatric & Neurological Drugs (FPGEE)","Chapter 25 Pharmacology of Endocrine Drugs (FPGEE)","Chapter 26 Pharmacology of Respiratory Drugs (FPGEE)","Chapter 27 Pharmacology of Musculoskeletal Drugs (FPGEE)","Chapter 28 Pharmacology of Antimicrobial Drugs (FPGEE)","Chapter 29 Pharmacology of Anticancer Drugs (FPGEE)","Chapter 30 Drug Metabolism (FPGEE)","Chapter 31 Pharmaceutical Excipient (FPGEE)","Chapter 32 Compounding Non-Sterile and Sterile Preparations (FPGEE)","Chapter 33 Pharmaceutical Dosage Forms (FPGEE)","Chapter 34 Drug Delivery Systems (FPGEE)"]},
+      "Part 3: FPGEE Social, Behavioral, Administrative Sciences":{weight:25,chapters:["Chapter 35 United States Healthcare Systems (FPGEE)","Chapter 36 Pharmacy Practice Regulations (FPGEE)","Chapter 37 Social, Behavioural, Economics Aspects of Pharmacy Profession (FPGEE)","Chapter 38 Pharmacy Management (FPGEE)","Chapter 39 Pharmacoeconomics (FPGEE)","Chapter 40 New Drug Development Process (FPGEE)","Chapter 41 Pharmacoepidemiology (FPGEE)","Chapter 42 Biostatistics (FPGEE)","Chapter 43 Hospital Pharmacy (FPGEE)","Chapter 44 Special Populations (FPGEE)","Chapter 45 Professional Pharmacy Communication Skills (FPGEE)","Chapter 46 Bioethics/Professional Judgement (FPGEE)","Chapter 47 Drug Information Resources and Literature Evaluation (FPGEE)","Chapter 48 Medication Errors and Patient Safety Practices (FPGEE)","Chapter 49 Health Promotion and Disease Prevention (FPGEE)","Chapter 50 Chapter Medication Dispensing and Distribution System (FPGEE)","Chapter 51 Drug Stability and Storage Conditions (FPGEE)"]},
+      "Part 4: FPGEE Pharmacy Practice - Clinical Pharmacy":{weight:25,chapters:["Chapter 52 Clinical Biochemistry and Drug Testing (FPGEE)","Chapter 53 Patient Care Process (FPGEE)","Chapter 54 Medication Administration (FPGEE)","Chapter 55 Adverse Drug Reactions and Management (FPGEE)","Chapter 56 Drug Interactions (FPGEE)","Chapter 57 OTC and Prescription Drugs for Dermatological and Foot Conditions (FPGEE)","Chapter 58 OTC and Prescription Drugs for Ophthalmic, Ear and Mouth Disorders (FPGEE)","Chapter 59 OTC Drugs Antihistamine, Decongestants, Antitussives, Expectorants (FPGEE)","Chapter 60 OTC Drugs for Nausea, Vomiting, Constipation, Diarrhea, Hemmorrhoids (FPGEE)","Chapter 61 Analgesics, and Topical Pain Relievers (FPGEE)","Chapter 62 Asthma and Chronic Obstructive Pulmonary Disease (COPD) (FPGEE)","Chapter 63 Gastrointestinal Conditions (FPGEE)","Chapter 64 Diabetes (FPGEE)","Chapter 65 Endocrine Disorders (FPGEE)","Chapter 66 Gynaecologic and Genitourinary Disorders (FPGEE)","Chapter 67 Urologic Disorders (FPGEE)","Chapter 68 Rheumatoid Arthritis, Osteoarthritis and Gout Arthritis (FPGEE)","Chapter 69 Osteoporosis (FPGEE)","Chapter 70 Hypertension (FPGEE)","Chapter 71 Coronary Artery Disease (FPGEE)","Chapter 72 Stroke (FPGEE)","Chapter 73 Congestive Heart Failure (FPGEE)","Chapter 74 Cardiac Arrhythmias (FPGEE)","Chapter 75 Peripheral Vascular diseases (FPGEE)","Chapter 76 Pain Management (FPGEE)","Chapter 77 Anxiety Disorder (FPGEE)","Chapter 78 Depression (FPGEE)","Chapter 79 Psychosis and Schizophrenia (FPGEE)","Chapter 80 Dementia (FPGEE)","Chapter 81 Seizure and Epilepsy (FPGEE)","Chapter 82 Parkinson's Disease (FPGEE)","Chapter 83 Infectious Diseases (FPGEE)","Chapter 84 Clinical Pharmacokinetics (FPGEE)","Chapter 85 Hematological Disorders (FPGEE)","Chapter 86 Renal Diseases (FPGEE)","Chapter 87 Chronic Liver Diseases (FPGEE)","Chapter 88 Substance Use Disorders/Smoking Cessation (FPGEE)","Chapter 89 Sleep Related Disorders (FPGEE)","Chapter 90 Nutrition and Obesity (FPGEE)","Chapter 91 Immunologic disorders (FPGEE)","Chapter 92 Carcinogeneis and Neoplasia (FPGEE)","Chapter 93 Vitamins and Supplements (FPGEE)"]}
+    }
+  },
+  "Qualifying Exam (MCQ)": {
+    partLabel: "Domain",
+    parts: {
+      "Domain 1: Patient Care (QE)":{weight:20,chapters:["Chapter 1 – Patient Care & Drug Therapy Problems (QE)","Chapter 2 – Mood Disorders (QE)","Chapter 3 – Anxiety Disorder (QE)","Chapter 4 – Psychosis (QE)","Chapter 5 – Dementia Disorders (QE)","Chapter 6 – ADHD (QE)","Chapter 7 – Insomnia (QE)","Chapter 8 - Seizures & Epilepsy (QE)","Chapter 9 – Parkinson's Disease (QE)","Chapter 10 - Pain Management (QE)","Chapter 11 - Neuralgia (QE)","Chapter 12 - Minor Ailment Eye Disorders (QE)","Chapter 13 - Glaucoma (QE)","Chapter 14 – Diabetes Mellitus (QE)","Chapter 15 – Thyroid Disorders (QE)","Chapter 16 – Contraception (QE)","Chapter 17 - Obesity (QE)","Chapter 18 – Anemia and Supplements (QE)","Chapter 19 – Fluid and Electrolyte Disorders (QE)","Chapter 20 – Hypertension (QE)","Chapter 21 – Dyslipidemia (QE)","Chapter 22 – Angina (QE)","Chapter 23 – ACS & Post MI (QE)","Chapter 24 – Stroke Prevention (QE)","Chapter 25 – Heart Failure (QE)","Chapter 26 – Arrhythmias (QE)","Chapter 27 – Peripheral Vascular Disease (QE)","Chapter 28 – Asthma (QE)","Chapter 29 – COPD (QE)","Chapter 30 – Minor Ailment Respiratory (QE)","Chapter 31 – Allergic Rhinitis & Drug Allergies (QE)","Chapter 32 – Minor GI Ailments (QE)","Chapter 33 – Peptic Ulcer (QE)","Chapter 34 – IBD (QE)","Chapter 35 – IBS (QE)","Chapter 36 – Constipation, Hemorrhoids, Diarrhea (QE)","Chapter 37 – Nausea & Vomiting (QE)","Chapter 38 – Liver Diseases & Hepatitis (QE)","Chapter 39 – CKD & Drugs in Renal Disease (QE)","Chapter 40 – Drugs in Pregnancy & Lactation (QE)","Chapter 41 – Gynecological Disorders (QE)","Chapter 42 – Urologic Disorders (QE)","Chapter 43 – Urinary Incontinence (QE)","Chapter 44 – MSK Minor Ailments (QE)","Chapter 45 – Autoimmune Disorders (QE)","Chapter 46 – Osteoarthritis (QE)","Chapter 47 – Rheumatoid Arthritis (QE)","Chapter 48 – Gout (QE)","Chapter 49 – Osteoporosis (QE)","Chapter 50 – Systemic Lupus Erythematosus (QE)","Chapter 51 – Acne (QE)","Chapter 52 – Dermatitis (QE)","Chapter 53 – Psoriasis (QE)","Chapter 54 – Foot Conditions (QE)","Chapter 55 – Skin Conditions (QE)","Chapter 56 – Antibiotic Spectrum (QE)","Chapter 57 – Endocarditis (QE)","Chapter 58 – Otitis Media (QE)","Chapter 59 – URTI (QE)","Chapter 60 – Pneumonia (QE)","Chapter 61 – Influenza (QE)","Chapter 62 – TB (QE)","Chapter 63 – Meningitis (QE)","Chapter 64 – SSTI & Bone Infections (QE)","Chapter 65 – UTI (QE)","Chapter 66 – STIs (QE)","Chapter 67 – Herpes (QE)","Chapter 68 – HIV (QE)","Chapter 69 – Traveler's Diarrhea (QE)","Chapter 70 – Malaria (QE)","Chapter 71 – Lyme Disease (QE)","Chapter 72 – Chemotherapy Side Effects (QE)","Chapter 73 – Pancreatitis (QE)","Chapter 74 – Cystic Fibrosis (QE)","Chapter 75 – Sig Codes (QE)","Chapter 76 – Basic Calculations (QE)","Chapter 77 – Dosage Calculations (QE)","Chapter 78 – Dilutions (QE)","Chapter 79 – Electrolyte Solutions (QE)","Chapter 80 – Parenteral Dosing (QE)","Chapter 81 – Clinical Pharmacokinetics (QE)","Chapter 82 – Drug Distribution Systems (QE)","Chapter 83 – Sterile Preparations (QE)"]},
+      "Domain 2: Knowledge & Expertise (QE)":{weight:20,chapters:["Chapter 84 – Pharmaceutical Literature (QE)","Chapter 85 – Pharmacoepidemiology (QE)","Chapter 86 – Biostatistics (QE)","Chapter 87 – Screening for Diseases (QE)","Chapter 88 – Drug Interactions (QE)","Chapter 89 – Therapeutic Drug Monitoring (QE)","Chapter 90 – Switching Drug Therapies (QE)"]},
+      "Domain 3: Communication & Collaboration (QE)":{weight:20,chapters:["Chapter 91 – Verbal & Non-verbal Communication (QE)","Chapter 92 – Interprofessional Collaboration (QE)","Chapter 93 – Adverse Drug Reactions (QE)","Chapter 94 – Perioperative Management (QE)","Chapter 95 – Complementary & Alternative Therapies (QE)","Chapter 96 – Nutrition Supplements & Herbal Products (QE)"]},
+      "Domain 4: Leadership & Stewardship (QE)":{weight:20,chapters:["Chapter 97 – Pharmacy Management (QE)","Chapter 98 – Health Promotion (QE)","Chapter 99 – Withdrawal Management (QE)","Chapter 100 – Smoking Cessation (QE)","Chapter 101 – Drugs in Elderly (QE)","Chapter 102 – Clinical Toxicity (QE)","Chapter 103 – Immunization & Vaccines (QE)"]},
+      "Domain 5: Professionalism (QE)":{weight:20,chapters:["Chapter 104 – Healthcare System in Canada (QE)","Chapter 105 – Federal Regulations (QE)","Chapter 106 – Ethical Principles (QE)","Chapter 107 – Pharmacoeconomics (QE)","Chapter 108 – Quality & Patient Safety (QE)","Chapter 109 – Drug Recalls & Warnings (QE)","Chapter 110 – Substance Abuse & Management (QE)"]}
+    }
+  }
 };
 
-const state={selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[]};
+const QUIZ_MAX = 10; // All Test Yourself quizzes are out of 10
 
+const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[]};
 const charts={};
 const viewStack=["defaultView"];
-const STORAGE_KEY = "pharmacyprep-evaluating-exam-state";
+const STORAGE_KEY="pharmacyprep-v2-state";
 
 function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({
-    partExamScores: state.partExamScores,
-    chapterAttempts: state.chapterAttempts,
-    attemptTimeline: state.attemptTimeline
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({
+    selectedCourse:state.selectedCourse,
+    partExamScores:state.partExamScores,
+    chapterAttempts:state.chapterAttempts,
+    attemptTimeline:state.attemptTimeline
   }));
 }
-
 function loadState(){
   const raw = localStorage.getItem(STORAGE_KEY);
   if(!raw) return;
-
   try{
-    const saved = JSON.parse(raw);
-    state.partExamScores = saved.partExamScores || {};
-    state.chapterAttempts = saved.chapterAttempts || {};
-    state.attemptTimeline = saved.attemptTimeline || [];
-  }catch(e){
-    console.error("Could not load saved data");
-  }
+    const s = JSON.parse(raw);
+    state.selectedCourse = "";
+    state.partExamScores = s.partExamScores || {};
+    state.chapterAttempts = s.chapterAttempts || {};
+    state.attemptTimeline = s.attemptTimeline || [];
+  }catch(e){}
 }
+
+function currentCourse(){return COURSES[state.selectedCourse]||null}
+function currentParts(){return currentCourse()?currentCourse().parts:{}}
+
+// ── DOM REFS ──
+const ddCourse=document.getElementById("ddCourse");
 const ddPart=document.getElementById("ddPart");
 const ddChapter=document.getElementById("ddChapter");
 const statusEl=document.getElementById("status");
 const backBtn=document.getElementById("backBtn");
 const topPill=document.getElementById("topPillLeft");
+const weightingPill=document.getElementById("weightingPill");
+const partLabel=document.getElementById("partLabel");
 
-Object.keys(EVALUATING_EXAM).forEach(part=>{
+// Populate course dropdown
+Object.keys(COURSES).forEach(c=>{
   const o=document.createElement("option");
-  o.value=part; o.textContent=`${part} (${EVALUATING_EXAM[part].weight}%)`;
-  ddPart.appendChild(o);
+  o.value=c;o.textContent=c;
+  ddCourse.appendChild(o);
 });
+ddCourse.value = "";
+ddPart.disabled = true;
+ddChapter.disabled = true;
+// Populate syllabus course dropdown too
+const sylCourseSelect=document.getElementById("sylCourseSelect");
+Object.keys(COURSES).forEach(c=>{
+  const o=document.createElement("option");
+  o.value=c;o.textContent=c;
+  sylCourseSelect.appendChild(o);
+});
+sylCourseSelect.addEventListener("change",()=>renderSyllabus(sylCourseSelect.value));
 
+ddCourse.addEventListener("change",()=>{
+  state.selectedCourse = ddCourse.value;
+  state.selectedPart = "";
+  state.selectedChapter = "";
+
+  if(!state.selectedCourse){
+    ddPart.innerHTML = '<option value="" selected>Select Part</option>';
+    ddPart.disabled = true;
+
+    ddChapter.innerHTML = '<option value="" selected>Select Chapter</option>';
+    ddChapter.disabled = true;
+
+    partLabel.textContent = "Part";
+    weightingPill.textContent = "Weighted grading";
+    topPill.textContent = "Select a course";
+    setStatus("Default page loaded");
+
+    viewStack.length = 0;
+    viewStack.push("defaultView");
+    showView("defaultView");
+    backBtn.style.display = "none";
+
+    destroyChart("defaultBarChart");
+    renderDefaultBarChart();
+    return;
+  }
+
+  const course = currentCourse();
+  partLabel.textContent = course.partLabel;
+
+  ddPart.innerHTML = `<option value="" selected>Select ${course.partLabel}</option>`;
+  Object.keys(course.parts).forEach(p=>{
+    const w = course.parts[p].weight;
+    const o = document.createElement("option");
+    o.value = p;
+    o.textContent = `${p} (${w}%)`;
+    ddPart.appendChild(o);
+  });
+  ddPart.disabled = false;
+
+  ddChapter.innerHTML = '<option value="" selected>Select Chapter</option>';
+  ddChapter.disabled = true;
+
+  const weights = Object.values(course.parts).map(p=>p.weight).join(" / ");
+  weightingPill.textContent = `Weighted grading: ${weights}`;
+  topPill.textContent = state.selectedCourse;
+  setStatus("Course selected");
+
+  destroyChart("defaultBarChart");
+  renderDefaultBarChart();
+});
 ddPart.addEventListener("change",()=>{
   state.selectedPart=ddPart.value;
   state.selectedChapter="";
+  const parts=currentParts();
   ddChapter.innerHTML='<option disabled selected>Select Chapter</option>';
-  EVALUATING_EXAM[state.selectedPart].chapters.forEach(ch=>{
-    const o=document.createElement("option"); o.value=ch; o.textContent=ch;
+  parts[state.selectedPart].chapters.forEach(ch=>{
+    const o=document.createElement("option");o.value=ch;o.textContent=ch;
     ddChapter.appendChild(o);
   });
-  ddChapter.disabled=false;
-  ddChapter.selectedIndex=0;
-  setStatus("Part selected");
-  pushView("partView");
-  renderPartView();
+  ddChapter.disabled=false;ddChapter.selectedIndex=0;
+  setStatus(`${currentCourse().partLabel} selected`);
+  pushView("partView");renderPartView();
 });
 
 ddChapter.addEventListener("change",()=>{
   state.selectedChapter=ddChapter.value;
   setStatus("Chapter selected");
-  pushView("chapterView");
-  renderChapterView();
+  pushView("chapterView");renderChapterView();
 });
 
 document.getElementById("viewResultsBtn").addEventListener("click",()=>{
-  pushView("resultsView");
-  renderResultsView();
-  setStatus("Results loaded");
+  if(!state.selectedCourse){setStatus("Select a course first");return;}
+  pushView("resultsView");renderResultsView();setStatus("Results loaded");
+});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  state.selectedCourse = "";
+  state.selectedPart = "";
+  state.selectedChapter = "";
+
+  ddCourse.value = "";
+
+  ddPart.innerHTML = '<option value="" selected>Select Part</option>';
+  ddPart.disabled = true;
+
+  ddChapter.innerHTML = '<option value="" selected>Select Chapter</option>';
+  ddChapter.disabled = true;
+
+  partLabel.textContent = "Part";
+  topPill.textContent = "Select a course";
+  weightingPill.textContent = "Weighted grading";
+  setStatus("Default page loaded");
+
+  viewStack.length = 0;
+  viewStack.push("defaultView");
+  showView("defaultView");
+  backBtn.style.display = "none";
+
+  destroyChart("defaultBarChart");
+  renderDefaultBarChart();
+});
+document.getElementById("infoBtn").addEventListener("click",()=>{
+  document.getElementById("infoModal").classList.add("open");
+});
+
+document.getElementById("infoModalClose").addEventListener("click",()=>{
+  document.getElementById("infoModal").classList.remove("open");
+});
+
+document.getElementById("infoModal").addEventListener("click",(e)=>{
+  if(e.target === document.getElementById("infoModal")){
+    document.getElementById("infoModal").classList.remove("open");
+  }
+});
+
+// Syllabus button
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  // Reset only selections and view state
+  state.selectedCourse = "";
+  state.selectedPart = "";
+  state.selectedChapter = "";
+
+  // Keep saved grades intact
+  ddCourse.value = "";
+  ddPart.innerHTML = '<option value="" selected>Select Part</option>';
+  ddPart.disabled = true;
+
+  ddChapter.innerHTML = '<option value="" selected>Select Chapter</option>';
+  ddChapter.disabled = true;
+
+  partLabel.textContent = "Part";
+  topPill.textContent = "Select a course";
+  weightingPill.textContent = "Weighted grading";
+  setStatus("Default page loaded");
+
+  // Return to default screen
+  viewStack.length = 0;
+  viewStack.push("defaultView");
+  showView("defaultView");
+  backBtn.style.display = "none";
+
+  destroyChart("defaultBarChart");
+  renderDefaultBarChart();
+});
+document.getElementById("modalClose").addEventListener("click",()=>{
+  document.getElementById("syllabusModal").classList.remove("open");
+});
+document.getElementById("syllabusModal").addEventListener("click",e=>{
+  if(e.target===document.getElementById("syllabusModal"))
+    document.getElementById("syllabusModal").classList.remove("open");
 });
 
 backBtn.addEventListener("click",()=>{
@@ -383,347 +837,170 @@ backBtn.addEventListener("click",()=>{
   backBtn.style.display=viewStack.length>1?"":"none";
   setStatus("Navigated back");
   if(prev==="defaultView"){
-    ddPart.selectedIndex=0;
+    ddPart.innerHTML=`<option disabled selected>Select Part</option>`;
     ddChapter.innerHTML='<option disabled selected>Select Chapter</option>';
     ddChapter.disabled=true;
-    state.selectedPart=""; state.selectedChapter="";
-    topPill.textContent="Evaluating Exam only";
-    destroyChart("defaultBarChart"); renderDefaultBarChart();
-  } else if(prev==="partView"){
-    state.selectedChapter=""; ddChapter.selectedIndex=0;
+    state.selectedPart="";state.selectedChapter="";
+    topPill.textContent=state.selectedCourse||"Select a course";
+    destroyChart("defaultBarChart");renderDefaultBarChart();
+  }else if(prev==="partView"){
+    state.selectedChapter="";ddChapter.selectedIndex=0;
     topPill.textContent=state.selectedPart.split(":")[0].trim();
     renderPartView();
-  } else if(prev==="chapterView"){
-    renderChapterView();
-  } else if(prev==="resultsView"){
-    renderResultsView();
-  }
+  }else if(prev==="chapterView"){renderChapterView();}
+  else if(prev==="resultsView"){renderResultsView();}
 });
 
-document.getElementById("infoBtn").addEventListener("click",()=>alert(
-  "Default page: 3-bar grade overview.\n"+
-  "Select a Part: enter your main part exam score.\n"+
-  "Select a Chapter: log individual chapter attempts.\n"+
-  "View Results: full weighted grade breakdown.\n\n"+
-  "Use ← Go Back to return to the previous screen at any time."
-));
-
 function pushView(id){
-  if(viewStack[viewStack.length-1]!==id) viewStack.push(id);
+  if(viewStack[viewStack.length-1]!==id)viewStack.push(id);
   showView(id);
   backBtn.style.display=viewStack.length>1?"":"none";
-  const labels={defaultView:"Evaluating Exam only",partView:state.selectedPart?state.selectedPart.split(":")[0].trim():"Part",chapterView:state.selectedChapter?trunc(state.selectedChapter,28):"Chapter",resultsView:"Full results"};
-  topPill.textContent=labels[id]||"Evaluating Exam";
-}
-
-
-async function loadAiResults(){
-  const target = document.getElementById("aiSummaryContent");
-  if (!target) return;
-
-  target.innerHTML = "Loading AI interpretation...";
-
-  try {
-    const res = await fetch("/api/results/ai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(buildResultsPayload())
-    });
-
-    const data = await res.json();
-
-    if (!data.ok && !data.ai) {
-      target.innerHTML = "Could not load AI interpretation.";
-      return;
-    }
-
-    const ai = data.ai || {};
-    target.innerHTML = `
-      <div style="display:grid;gap:12px;">
-        <div>
-          <strong style="color:var(--text);display:block;margin-bottom:4px;">Summary</strong>
-          <div>${xe(ai.summary || "No summary available.")}</div>
-        </div>
-        <div>
-          <strong style="color:var(--text);display:block;margin-bottom:4px;">Strengths</strong>
-          <div>${xe(ai.strengths || "No strengths summary available.")}</div>
-        </div>
-        <div>
-          <strong style="color:var(--text);display:block;margin-bottom:4px;">Focus next</strong>
-          <div>${xe(ai.focus_next || "No next-step summary available.")}</div>
-        </div>
-      </div>
-    `;
-  } catch (err) {
-    target.innerHTML = "AI interpretation could not be loaded right now.";
-  }
+  const labels={defaultView:state.selectedCourse||"Select a course",partView:state.selectedPart?state.selectedPart.split(":")[0].trim():"Part",chapterView:state.selectedChapter?trunc(state.selectedChapter,28):"Chapter",resultsView:"Full results"};
+  topPill.textContent=labels[id]||"PharmacyPrep";
 }
 function showView(id){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
-
 function setStatus(m){statusEl.innerHTML=`<span>●</span>&nbsp;${m}`}
 function trunc(s,n){return s.length>n?s.slice(0,n)+"…":s}
 function chKey(p,c){return`${p}|||${c}`}
-function clamp(v){const n=parseFloat(v);return isNaN(n)?null:Math.max(0,Math.min(100,Math.round(n*10)/10))}
-function latestCh(p,c){
-  const a = state.chapterAttempts[chKey(p,c)] || [];
-  return a.length ? a[a.length - 1] : null;
-}
+function latestCh(p,c){const a=state.chapterAttempts[chKey(p,c)]||[];return a.length?a[a.length-1]:null;}
 
 function partProgress(p){
-  const chs = EVALUATING_EXAM[p].chapters;
-
-  let done = 0;
-  let earned = 0;
-  let possible = 0;
-
-  chs.forEach(c => {
-    const a = latestCh(p, c);
-    if(a){
-      done++;
-      earned += Number(a.earned || 0);
-      possible += Number(a.possible || 0);
-    }
-  });
-
-  const percent = possible > 0
-    ? Math.round((earned / possible) * 1000) / 10
-    : null;
-
-  return {
-    done,
-    total: chs.length,
-    earned,
-    possible,
-    percent
-  };
+  const parts=currentParts();
+  if(!parts[p])return{done:0,total:0,earned:0,possible:0,percent:null};
+  const chs=parts[p].chapters;
+  let done=0,earned=0,possible=0;
+  chs.forEach(c=>{const a=latestCh(p,c);if(a){done++;earned+=Number(a.earned||0);possible+=Number(a.possible||0);}});
+  return{done,total:chs.length,earned,possible,percent:possible>0?Math.round(earned/possible*1000)/10:null};
 }
-
 function effScore(p){
-  const pr = partProgress(p);
-
-  return {
-    score: pr.percent,
-    source: pr.percent !== null ? "chapter aggregate" : "no score yet",
-    progress: pr
-  };
+  const pr=partProgress(p);
+  if(state.partExamScores[p]!=null)return{score:state.partExamScores[p],source:"part exam score",progress:pr};
+  return{score:pr.percent,source:pr.percent!==null?"chapter aggregate":"no score yet",progress:pr};
 }
-
 function weightedGrade(){
+  const parts=currentParts();
   let ws=0,wc=0;
-  Object.keys(EVALUATING_EXAM).forEach(p=>{const w=EVALUATING_EXAM[p].weight,e=effScore(p);if(e.score!==null){ws+=e.score*w;wc+=w;}});
+  Object.keys(parts).forEach(p=>{const w=parts[p].weight,e=effScore(p);if(e.score!==null){ws+=e.score*w;wc+=w;}});
   return{score:wc?Math.round(ws/wc*10)/10:null,coverage:wc};
 }
-
 function projected(){
+  const parts=currentParts();
   let t=0;
-  Object.keys(EVALUATING_EXAM).forEach(p=>{const w=EVALUATING_EXAM[p].weight,e=effScore(p);t+=(e.score??0)*w;});
+  Object.keys(parts).forEach(p=>{const w=parts[p].weight,e=effScore(p);t+=(e.score??0)*w;});
   return Math.round(t/100*10)/10;
 }
-
 function xe(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
-function mkChart(id,cfg){
-  destroyChart(id);
-  const c=document.getElementById(id);
-  if(!c)return;
-  charts[id]=new Chart(c,cfg);
-}
+function mkChart(id,cfg){destroyChart(id);const c=document.getElementById(id);if(!c)return;charts[id]=new Chart(c,cfg);}
+const PC=["#111827","#374151","#6b7280","#9ca3af","#d1d5db"];
+const PL=["rgba(17,24,39,.12)","rgba(55,65,81,.12)","rgba(107,114,128,.12)","rgba(156,163,175,.12)","rgba(209,213,219,.12)"];
 
-const PC=["#111827","#374151","#6b7280"];
-const PL=["rgba(17,24,39,.12)","rgba(55,65,81,.12)","rgba(107,114,128,.12)"];
-
-/* ── DEFAULT BAR ── */
 function renderDefaultBarChart(){
-  const parts = Object.keys(EVALUATING_EXAM);
-
-  const achieved = parts.map(p => {
-    const score = effScore(p).score ?? 0;
-    const weight = EVALUATING_EXAM[p].weight;
-    return Math.round((score * weight / 100) * 10) / 10;
-  });
-
-  const remaining = parts.map((p, i) => {
-    const weight = EVALUATING_EXAM[p].weight;
-    return Math.max(0, Math.round((weight - achieved[i]) * 10) / 10);
-  });
-
-  mkChart("defaultBarChart", {
-    type: "bar",
-    data: {
-      labels: parts.map(p => `${p.split(":")[0]} (${EVALUATING_EXAM[p].weight}%)`),
-      datasets: [
-        {
-          label: "Earned toward final grade",
-          data: achieved,
-          backgroundColor: PC,
-          borderRadius: 8,
-          borderWidth: 0
-        },
-        {
-          label: "Remaining in section",
-          data: remaining,
-          backgroundColor: PL,
-          borderRadius: 8,
-          borderWidth: 0
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          labels: {
-            color: "#64748b",
-            font: { size: 12 }
-          }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context){
-              return `${context.dataset.label}: ${context.raw}%`;
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          stacked: true,
-          ticks: { color: "#64748b" },
-          grid: { display: false }
-        },
-        y: {
-          stacked: true,
-          min: 0,
-          max: 55,
-          ticks: { color: "#64748b", stepSize: 5 },
-          grid: { color: "rgba(15,23,42,.05)" },
-          title: {
-            display: true,
-            text: "Contribution to final grade (%)",
-            color: "#64748b"
-          }
-        }
-      }
-    }
+  if(!state.selectedCourse){
+    mkChart("defaultBarChart",{type:"bar",data:{labels:["Select a course to see your grade breakdown"],datasets:[{data:[0],backgroundColor:"rgba(15,23,42,.08)",borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
+    return;
+  }
+  const parts=Object.keys(currentParts());
+  const achieved=parts.map(p=>{const s=effScore(p).score??0;const w=currentParts()[p].weight;return Math.round(s*w/100*10)/10;});
+  const remaining=parts.map((p,i)=>Math.max(0,Math.round((currentParts()[p].weight-achieved[i])*10)/10));
+  const maxW=Math.max(...parts.map(p=>currentParts()[p].weight));
+  mkChart("defaultBarChart",{
+    type:"bar",
+    data:{labels:parts.map(p=>`${p.split(":")[0]} (${currentParts()[p].weight}%)`),datasets:[
+      {label:"Earned toward final grade",data:achieved,backgroundColor:PC,borderRadius:8,borderWidth:0},
+      {label:"Remaining in section",data:remaining,backgroundColor:PL,borderRadius:8,borderWidth:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},
+      scales:{x:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}},
+        y:{stacked:true,min:0,max:maxW+5,ticks:{color:"#64748b",stepSize:5},grid:{color:"rgba(15,23,42,.05)"},title:{display:true,text:"Contribution to final grade (%)",color:"#64748b"}}}}
   });
 }
 
-/* ── PART VIEW ── */
 function renderPartView(){
   const panel=document.getElementById("partOnlyPanel");
   const snap=document.getElementById("partSnapshotPanel");
   if(!state.selectedPart||!panel||!snap)return;
-  const w=EVALUATING_EXAM[state.selectedPart].weight;
+  const parts=currentParts();
+  const w=parts[state.selectedPart].weight;
   const eff=effScore(state.selectedPart);
   const curEx=state.partExamScores[state.selectedPart]??"";
-
+  const lbl=currentCourse().partLabel;
   panel.innerHTML=`
     <div class="part-banner">
       <div><strong>${xe(state.selectedPart)}</strong><span>Weight in final grade: ${w}%</span></div>
       <div class="part-chip">${w}% section</div>
     </div>
     <div class="metric-row">
-      <div><strong>Part score so far</strong><br><span style="color:var(--muted);font-size:.86rem;">Based on all latest chapter quiz results</span></div>
-      <div class="metric-pill">
-        ${eff.progress.percent!==null ? `${eff.progress.earned}/${eff.progress.possible} (${eff.progress.percent}%)` : "—"}
-      </div>
+      <div><strong>${lbl} score so far</strong><br><span style="color:var(--muted);font-size:.86rem;">Based on all latest chapter quiz results</span></div>
+      <div class="metric-pill">${eff.progress.percent!==null?`${eff.progress.earned}/${eff.progress.possible} (${eff.progress.percent}%)`:"—"}</div>
     </div>
     <div style="margin-top:18px;">
-      <label class="subtle-label" for="partExamInput">Main part exam score</label>
+      <label class="subtle-label" for="partExamInput">Main ${lbl.toLowerCase()} exam score</label>
       <div class="row">
-        <div><input id="partExamInput" type="number" min="0" max="100" placeholder="Enter overall part exam score" value="${curEx}"></div>
+        <div><input id="partExamInput" type="number" min="0" max="100" placeholder="Enter overall ${lbl.toLowerCase()} exam score" value="${curEx}"></div>
         <div style="flex:0 0 auto;min-width:auto;"><button class="primary-btn" id="savePartExamBtn">Save Score</button></div>
       </div>
-    </div>
-  `;
-
+    </div>`;
   snap.innerHTML=`
-    <div class="metric-row">
-      <div><strong>Chapters scored</strong><br><span style="color:var(--muted);font-size:.86rem;">Inside this part</span></div>
-      <div class="metric-pill">${eff.progress.done}/${eff.progress.total}</div>
-    </div>
-    <div class="metric-row">
-      <div><strong>Chapter average</strong><br><span style="color:var(--muted);font-size:.86rem;">Scored chapters only</span></div>
-      <div class="metric-pill">${eff.progress.avg!==null?`${eff.progress.avg}%`:"—"}</div>
-    </div>
-    <div class="metric-row">
-      <div><strong>Selected chapter</strong><br><span style="color:var(--muted);font-size:.86rem;">Choose one from the dropdown to log attempts</span></div>
-      <div class="metric-pill" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">
-        ${state.selectedChapter?xe(trunc(state.selectedChapter,22)):"None selected"}
-      </div>
-    </div>
-  `;
-
+    <div class="metric-row"><div><strong>Chapters scored</strong><br><span style="color:var(--muted);font-size:.86rem;">Inside this ${lbl.toLowerCase()}</span></div><div class="metric-pill">${eff.progress.done}/${eff.progress.total}</div></div>
+    <div class="metric-row"><div><strong>Chapter average</strong><br><span style="color:var(--muted);font-size:.86rem;">Scored chapters only</span></div><div class="metric-pill">${eff.progress.percent!==null?`${eff.progress.percent}%`:"—"}</div></div>
+    <div class="metric-row"><div><strong>Selected chapter</strong><br><span style="color:var(--muted);font-size:.86rem;">Choose one from the dropdown to log attempts</span></div><div class="metric-pill" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">${state.selectedChapter?xe(trunc(state.selectedChapter,22)):"None selected"}</div></div>`;
   document.getElementById("savePartExamBtn").addEventListener("click",()=>{
-    const v=clamp(document.getElementById("partExamInput").value);
-    if(v===null){state.partExamScores[state.selectedPart]=null;setStatus("Part exam score cleared");}
-    else{state.partExamScores[state.selectedPart]=v;
-saveState();setStatus("Part exam score saved");}
-    renderPartView();
-    destroyChart("defaultBarChart"); renderDefaultBarChart();
+    const inp=document.getElementById("partExamInput");
+    const v=inp.value===""?null:Math.max(0,Math.min(100,Math.round(parseFloat(inp.value)*10)/10));
+    if(v===null)state.partExamScores[state.selectedPart]=null;
+    else state.partExamScores[state.selectedPart]=v;
+    saveState();setStatus(`${lbl} exam score ${v===null?"cleared":"saved"}`);
+    renderPartView();destroyChart("defaultBarChart");renderDefaultBarChart();
   });
 }
 
-/* ── CHAPTER VIEW ── */
 function renderChapterView(){
   const lp=document.getElementById("chapterPartPanel");
   const rp=document.getElementById("chapterOnlyPanel");
   if(!state.selectedPart||!lp||!rp)return;
   const eff=effScore(state.selectedPart);
   const attempts=state.selectedChapter?(state.chapterAttempts[chKey(state.selectedPart,state.selectedChapter)]||[]):[];
-
+  const lbl=currentCourse().partLabel;
   lp.innerHTML=`
     <div class="part-banner">
-      <div><strong>${xe(state.selectedPart)}</strong><span>Section estimate &amp; saved part exam score</span></div>
-      <div class="part-chip">${EVALUATING_EXAM[state.selectedPart].weight}%</div>
+      <div><strong>${xe(state.selectedPart)}</strong><span>Section estimate &amp; saved ${lbl.toLowerCase()} exam score</span></div>
+      <div class="part-chip">${currentParts()[state.selectedPart].weight}%</div>
     </div>
-    <div class="metric-row">
-      <div><strong>Current grade</strong><br><span style="color:var(--muted);font-size:.86rem;">Using ${xe(eff.source)}</span></div>
-      <div class="metric-pill">${eff.score!==null?`${eff.score}%`:"—"}</div>
-    </div>
-    <div class="metric-row">
-      <div><strong>Part exam score</strong><br><span style="color:var(--muted);font-size:.86rem;">Saved overall score</span></div>
-      <div class="metric-pill">${state.partExamScores[state.selectedPart]!=null?`${state.partExamScores[state.selectedPart]}%`:"Not entered"}</div>
-    </div>
-    <div class="metric-row">
-      <div><strong>Chapters scored</strong><br><span style="color:var(--muted);font-size:.86rem;">Coverage in this part</span></div>
-      <div class="metric-pill">${eff.progress.done}/${eff.progress.total}</div>
-    </div>
-  `;
+    <div class="metric-row"><div><strong>Current grade</strong><br><span style="color:var(--muted);font-size:.86rem;">Using ${xe(eff.source)}</span></div><div class="metric-pill">${eff.score!==null?`${eff.score}%`:"—"}</div></div>
+    <div class="metric-row"><div><strong>${lbl} exam score</strong><br><span style="color:var(--muted);font-size:.86rem;">Saved overall score</span></div><div class="metric-pill">${state.partExamScores[state.selectedPart]!=null?`${state.partExamScores[state.selectedPart]}%`:"Not entered"}</div></div>
+    <div class="metric-row"><div><strong>Chapters scored</strong><br><span style="color:var(--muted);font-size:.86rem;">Coverage in this ${lbl.toLowerCase()}</span></div><div class="metric-pill">${eff.progress.done}/${eff.progress.total}</div></div>`;
 
-   rp.innerHTML=`
+  // Build quick-score chips 0–10
+  const quickChips=[0,1,2,3,4,5,6,7,8,9,10].map(n=>`<button class="qs-chip" onclick="quickScore(${n})">${n}/10</button>`).join("");
+
+  rp.innerHTML=`
     <div class="part-banner">
-      <div><strong style="font-size:.92rem;">${xe(trunc(state.selectedChapter,42))}</strong><span>Each entry becomes a numbered attempt.</span></div>
+      <div><strong style="font-size:.92rem;">${xe(trunc(state.selectedChapter,42))}</strong><span>Quiz scored out of 10 points</span></div>
       <div class="part-chip">${attempts.length} attempt${attempts.length===1?"":"s"}</div>
     </div>
-
-    <div class="row">
-      <div>
-        <label class="subtle-label" for="chapterEarnedInput">Score earned</label>
-        <input id="chapterEarnedInput" type="number" min="0" step="1" placeholder="e.g. 3">
+    <div class="score-input-group">
+      <span class="score-label">Score earned — out of 10</span>
+      <div class="score-row">
+        <div class="score-field">
+          <span class="sf-icon">✏️</span>
+          <input id="chapterEarnedInput" type="number" min="0" max="10" step="1" placeholder="0–10">
+        </div>
+        <div class="score-divider">/</div>
+        <div class="out-of-badge">10</div>
+        <button class="add-btn" id="addChapterAttemptBtn">Add Attempt</button>
       </div>
-      <div>
-        <label class="subtle-label" for="chapterPossibleInput">Out of</label>
-        <input id="chapterPossibleInput" type="number" min="1" step="1" placeholder="e.g. 5">
-      </div>
-      <div style="flex:0 0 auto;min-width:auto;">
-        <button class="primary-btn" id="addChapterAttemptBtn">Add Attempt</button>
-      </div>
+      <p class="score-hint">Or tap a quick score below:</p>
+      <div class="quick-scores">${quickChips}</div>
     </div>
-
     <div class="attempt-box">
       <div class="subtle-label">Attempt history</div>
       <div id="attemptHistoryList">
         ${attempts.length
-          ? [...attempts].reverse().map((item,ri)=>`
+          ?[...attempts].reverse().map((item,ri)=>`
             <div class="attempt-item">
               <div>
                 <strong>${xe(item.label)}</strong>
@@ -732,60 +1009,40 @@ function renderChapterView(){
               </div>
               <div style="display:flex;align-items:center;gap:10px">
                 <div class="metric-pill">${item.earned}/${item.possible} • ${item.score}%</div>
-                <button onclick="deleteAttempt(${attempts.length-1-ri})"
-                  style="border:none;background:none;cursor:pointer;color:#94a3b8;font-size:1rem;padding:0 4px;line-height:1;transition:.15s"
-                  onmouseover="this.style.color='#e11d48'" onmouseout="this.style.color='#94a3b8'"
-                  title="Delete attempt">✕</button>
+                <button onclick="deleteAttempt(${attempts.length-1-ri})" style="border:none;background:none;cursor:pointer;color:#94a3b8;font-size:1rem;padding:0 4px;line-height:1;transition:.15s" onmouseover="this.style.color='#e11d48'" onmouseout="this.style.color='#94a3b8'" title="Delete attempt">✕</button>
               </div>
             </div>`).join("")
-          : '<p style="color:var(--muted);font-size:.9rem;line-height:1.6;">No attempts yet for this chapter.</p>'}
+          :'<p style="color:var(--muted);font-size:.9rem;line-height:1.6;">No attempts yet for this chapter.</p>'}
       </div>
-    </div>
-  `;
+    </div>`;
 
   document.getElementById("addChapterAttemptBtn").addEventListener("click",()=>{
-    const earned = parseInt(document.getElementById("chapterEarnedInput").value,10);
-    const possible = parseInt(document.getElementById("chapterPossibleInput").value,10);
-
-    if(isNaN(earned) || isNaN(possible)){
-      setStatus("Enter valid numbers");
-      return;
-    }
-    if(possible <= 0){
-      setStatus("Total must be greater than 0");
-      return;
-    }
-    if(earned < 0 || earned > possible){
-      setStatus("Score earned must be between 0 and total");
-      return;
-    }
-
-    const percent = Math.round((earned / possible) * 1000) / 10;
-
-    const key = chKey(state.selectedPart,state.selectedChapter);
-    if(!state.chapterAttempts[key]) state.chapterAttempts[key] = [];
-
-    const n = state.chapterAttempts[key].length + 1;
-
-    const entry = {
-      part: state.selectedPart,
-      chapter: state.selectedChapter,
-      label: `Attempt ${n}`,
-      earned,
-      possible,
-      score: percent,
-      timestamp: new Date().toLocaleString()
-    };
-
-    state.chapterAttempts[key].push(entry);
-    state.attemptTimeline.push(entry);
-    saveState();
-
-    setStatus("Attempt added");
-    renderChapterView();
-    destroyChart("defaultBarChart");
-    renderDefaultBarChart();
+    const earned=parseInt(document.getElementById("chapterEarnedInput").value,10);
+    if(isNaN(earned)||earned<0||earned>QUIZ_MAX){setStatus(`Score must be between 0 and ${QUIZ_MAX}`);return;}
+    addAttempt(earned);
   });
+}
+
+window.quickScore=function(n){
+  // highlight chip
+  document.querySelectorAll(".qs-chip").forEach(c=>{c.classList.remove("active");if(parseInt(c.textContent)===n)c.classList.add("active");});
+  const inp=document.getElementById("chapterEarnedInput");
+  if(inp)inp.value=n;
+  addAttempt(n);
+};
+
+function addAttempt(earned){
+  const key=chKey(state.selectedPart,state.selectedChapter);
+  if(!state.chapterAttempts[key])state.chapterAttempts[key]=[];
+  const n=state.chapterAttempts[key].length+1;
+  const percent=Math.round(earned/QUIZ_MAX*1000)/10;
+  const entry={part:state.selectedPart,chapter:state.selectedChapter,label:`Attempt ${n}`,earned,possible:QUIZ_MAX,score:percent,timestamp:new Date().toLocaleString()};
+  state.chapterAttempts[key].push(entry);
+  state.attemptTimeline.push(entry);
+  saveState();
+  setStatus("Attempt added");
+  renderChapterView();
+  destroyChart("defaultBarChart");renderDefaultBarChart();
 }
 
 window.deleteAttempt=function(idx){
@@ -793,175 +1050,122 @@ window.deleteAttempt=function(idx){
   if(!state.chapterAttempts[key])return;
   const removed=state.chapterAttempts[key][idx];
   state.chapterAttempts[key].splice(idx,1);
-  const ti = state.attemptTimeline.findLastIndex(t =>
-  t.part === removed.part &&
-  t.chapter === removed.chapter &&
-  t.score === removed.score &&
-  t.earned === removed.earned &&
-  t.possible === removed.possible
-);
- if(ti>=0)state.attemptTimeline.splice(ti,1);
+  const ti=state.attemptTimeline.findLastIndex(t=>t.part===removed.part&&t.chapter===removed.chapter&&t.score===removed.score&&t.earned===removed.earned);
+  if(ti>=0)state.attemptTimeline.splice(ti,1);
   setStatus("Attempt deleted");
-  renderChapterView();
-  destroyChart("defaultBarChart"); renderDefaultBarChart();
+  renderChapterView();destroyChart("defaultBarChart");renderDefaultBarChart();
 };
 
-/* ── RESULTS VIEW ── */
+// ── RESULTS ──
 function renderResultsView(){
-  renderResultsMetrics();
-  renderSectionBarChart();
-  renderTrendLineChart();
-  renderProgressBarChart();
-  renderChapterAvgChart();
-  renderDonuts();
-  renderNotice();
-  renderStrongParts();
+  renderResultsMetrics();renderSectionBarChart();renderTrendLineChart();
+  renderProgressBarChart();renderChapterAvgChart();renderDonuts();
+  renderNotice();renderStrongParts();
 }
-
 function renderResultsMetrics(){
-  const wg = weightedGrade();
-  const proj = projected();
-
-  const strongest = Object.keys(EVALUATING_EXAM)
-    .map(p => ({ p, s: effScore(p).score ?? 0 }))
-    .sort((a,b)=>b.s-a.s)[0];
-
-  document.getElementById("resultsMetrics").innerHTML = `
-    <div class="card" style="text-align:center">
-      <div class="card-title">${proj}%</div>
-      <div class="card-sub" style="margin-bottom:0">Current overall grade</div>
-    </div>
-
-    <div class="card" style="text-align:center">
-      <div class="card-title">${proj}%</div>
-      <div class="card-sub" style="margin-bottom:0">Projected full grade</div>
-    </div>
-
-    <div class="card" style="text-align:center">
-      <div class="card-title">${wg.coverage}%</div>
-      <div class="card-sub" style="margin-bottom:0">Grade coverage</div>
-    </div>
-
-    <div class="card" style="text-align:center">
-      <div class="card-title">${state.attemptTimeline.length}</div>
-      <div class="card-sub" style="margin-bottom:0">Total attempts</div>
-    </div>
-
-    <div class="card" style="text-align:center">
-      <div class="card-title">${strongest && strongest.s ? `${strongest.s}%` : "—"}</div>
-      <div class="card-sub" style="margin-bottom:0">Top section score</div>
-    </div>
-
-    <div class="card" style="text-align:center">
-      <div class="card-title">${strongest ? xe(strongest.p.split(":")[0].trim()) : "—"}</div>
-      <div class="card-sub" style="margin-bottom:0">Best section</div>
-    </div>
-  `;
+  const wg=weightedGrade();const proj=projected();
+  const parts=currentParts();
+  const strongest=Object.keys(parts).map(p=>({p,s:effScore(p).score??0})).sort((a,b)=>b.s-a.s)[0];
+  document.getElementById("resultsMetrics").innerHTML=`
+    <div class="card" style="text-align:center"><div class="card-title">${proj}%</div><div class="card-sub" style="margin-bottom:0">Current overall grade</div></div>
+    <div class="card" style="text-align:center"><div class="card-title">${wg.coverage}%</div><div class="card-sub" style="margin-bottom:0">Grade coverage</div></div>
+    <div class="card" style="text-align:center"><div class="card-title">${state.attemptTimeline.length}</div><div class="card-sub" style="margin-bottom:0">Total attempts</div></div>
+    <div class="card" style="text-align:center"><div class="card-title">${strongest&&strongest.s?`${strongest.s}%`:"—"}</div><div class="card-sub" style="margin-bottom:0">Top section score</div></div>
+    <div class="card" style="text-align:center"><div class="card-title">${strongest?xe(strongest.p.split(":")[0].trim()):"—"}</div><div class="card-sub" style="margin-bottom:0">Best section</div></div>
+    <div class="card" style="text-align:center"><div class="card-title">${state.attemptTimeline.length?Math.round(state.attemptTimeline.reduce((s,i)=>s+i.score,0)/state.attemptTimeline.length*10)/10:0}%</div><div class="card-sub" style="margin-bottom:0">Avg attempt score</div></div>`;
 }
-
 function renderSectionBarChart(){
-  const parts=Object.keys(EVALUATING_EXAM);
-  mkChart("sectionBarChart",{
-    type:"bar",
-    data:{labels:parts.map(p=>p.replace(/^Part \d+: /,"").slice(0,22)),datasets:[{label:"Score",data:parts.map(p=>effScore(p).score??0),backgroundColor:PC,borderRadius:8,borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}}
-  });
+  const parts=currentParts();const pKeys=Object.keys(parts);
+  mkChart("sectionBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.replace(/^(Part|Domain) \d+: /,"").slice(0,22)),datasets:[{label:"Score",data:pKeys.map(p=>effScore(p).score??0),backgroundColor:PC.slice(0,pKeys.length),borderRadius:8,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
 }
-
 function renderTrendLineChart(){
   const tl=state.attemptTimeline;
-  mkChart("trendLineChart",{
-    type:"line",
-    data:{labels:tl.map((_,i)=>`#${i+1}`),datasets:[{label:"Score",data:tl.map(t=>t.score),borderColor:"#111827",backgroundColor:"rgba(17,24,39,.06)",tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:"#111827",borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b",maxTicksLimit:10},grid:{display:false}}}}
-  });
+  mkChart("trendLineChart",{type:"line",data:{labels:tl.map((_,i)=>`#${i+1}`),datasets:[{label:"Score",data:tl.map(t=>t.score),borderColor:"#111827",backgroundColor:"rgba(17,24,39,.06)",tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:"#111827",borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b",maxTicksLimit:10},grid:{display:false}}}}});
 }
-
 function renderProgressBarChart(){
-  const parts=Object.keys(EVALUATING_EXAM);
-  const pcts=parts.map(p=>{const pr=partProgress(p);return pr.total?Math.round(pr.done/pr.total*100):0;});
-  mkChart("progressBarChart",{
-    type:"bar",
-    data:{
-      labels:parts.map(p=>p.split(":")[0].trim()),
-      datasets:[
-        {label:"Completed",data:pcts,backgroundColor:PC,borderRadius:6,borderWidth:0},
-        {label:"Remaining",data:pcts.map(v=>100-v),backgroundColor:PL,borderRadius:6,borderWidth:0}
-      ]
-    },
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",
-      plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},
-      scales:{
-        x:{stacked:true,min:0,max:100,ticks:{stepSize:25,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},
-        y:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}}
-      }
-    }
-  });
+  const parts=currentParts();const pKeys=Object.keys(parts);
+  const pcts=pKeys.map(p=>{const pr=partProgress(p);return pr.total?Math.round(pr.done/pr.total*100):0;});
+  mkChart("progressBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.split(":")[0].trim()),datasets:[{label:"Completed",data:pcts,backgroundColor:PC.slice(0,pKeys.length),borderRadius:6,borderWidth:0},{label:"Remaining",data:pcts.map(v=>100-v),backgroundColor:PL.slice(0,pKeys.length),borderRadius:6,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},scales:{x:{stacked:true,min:0,max:100,ticks:{stepSize:25,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},y:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}}}}});
 }
-
 function renderChapterAvgChart(){
-  const parts=Object.keys(EVALUATING_EXAM);
-  mkChart("chapterAvgChart",{
-    type:"doughnut",
-    data:{labels:parts.map(p=>p.split(":")[0].trim()),datasets:[{data:parts.map(p=>effScore(p).score??0),backgroundColor:PC,borderColor:"#fff",borderWidth:3,hoverOffset:8}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom",labels:{color:"#64748b",font:{size:12},padding:14}}}}
-  });
+  const parts=currentParts();const pKeys=Object.keys(parts);
+  mkChart("chapterAvgChart",{type:"doughnut",data:{labels:pKeys.map(p=>p.split(":")[0].trim()),datasets:[{data:pKeys.map(p=>effScore(p).score??0),backgroundColor:PC.slice(0,pKeys.length),borderColor:"#fff",borderWidth:3,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom",labels:{color:"#64748b",font:{size:12},padding:14}}}}});
 }
-
 function renderDonuts(){
-  const wg=weightedGrade();
-  const proj=projected();
+  const wg=weightedGrade();const proj=projected();
   const avg=state.attemptTimeline.length?Math.round(state.attemptTimeline.reduce((s,i)=>s+i.score,0)/state.attemptTimeline.length*10)/10:0;
-  document.getElementById("donutWrap").innerHTML=[
-    [wg.score??0,"Current","Current weighted grade"],
-    [wg.coverage,"Coverage","Assessment coverage"],
-    [proj,"Projected","Projected final grade"],
-    [avg,"Avg Attempt","Average attempt score"]
-  ].map(([p,l,cap])=>`<div class="donut-card">${svgDonut(p,l)}<div class="donut-label">${cap}</div></div>`).join("");
+  document.getElementById("donutWrap").innerHTML=[[wg.score??0,"Current","Weighted grade"],[wg.coverage,"Coverage","Assessment coverage"],[proj,"Projected","Projected final"],[avg,"Avg Attempt","Average attempt"]].map(([p,l,cap])=>`<div class="donut-card">${svgDonut(p,l)}<div class="donut-label">${cap}</div></div>`).join("");
 }
-
 function svgDonut(pct,label){
   const r=54,c=2*Math.PI*r,safe=Math.max(0,Math.min(100,Number(pct)||0)),offset=c-(safe/100)*c;
-  return`<svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="${label} ${safe}%">
-    <circle cx="75" cy="75" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="12"/>
-    <circle cx="75" cy="75" r="${r}" fill="none" stroke="#111827" stroke-width="12" stroke-linecap="round"
-      stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 75 75)"/>
-    <text x="75" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#0f172a">${safe}%</text>
-    <text x="75" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#64748b">${label}</text>
-  </svg>`;
+  return`<svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="12"/><circle cx="75" cy="75" r="${r}" fill="none" stroke="#111827" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 75 75)"/><text x="75" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#0f172a">${safe}%</text><text x="75" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#64748b">${label}</text></svg>`;
 }
-
 function renderNotice(){
-  const wg=weightedGrade();
-  const parts=Object.keys(EVALUATING_EXAM);
-  const missing=parts.filter(p=>effScore(p).score===null);
-  const partial=parts.filter(p=>{const e=effScore(p);return e.score!==null&&e.progress.done<e.progress.total&&state.partExamScores[p]==null;});
-  let html="Your results are based on the scores entered so far.";
-  if(wg.coverage<100)html+=` <br><br>Current weighted coverage is <strong>${wg.coverage}%</strong>.`;
-  if(missing.length)html+=` <br><br>Still missing data for: <strong>${missing.map(xe).join(", ")}</strong>.`;
-  if(partial.length)html+=` <br><br>Building chapter coverage in: <strong>${partial.map(p=>`${xe(p)} (${partProgress(p).done}/${partProgress(p).total})`).join(", ")}</strong>.`;
-  if(!missing.length&&!partial.length)html+=" <br><br>You have coverage across all major parts — great work!";
+  const wg=weightedGrade();const parts=currentParts();
+  const missing=Object.keys(parts).filter(p=>effScore(p).score===null);
+  let html="Results based on scores entered so far.";
+  if(wg.coverage<100)html+=` Weighted coverage: <strong>${wg.coverage}%</strong>.`;
+  if(missing.length)html+=` Missing data for: <strong>${missing.map(p=>xe(p.split(":")[0])).join(", ")}</strong>.`;
+  if(!missing.length)html+=" Full coverage — great work!";
   document.getElementById("completionNotice").innerHTML=html;
 }
-
 function renderStrongParts(){
-  const ranked=Object.keys(EVALUATING_EXAM).map(p=>{
-    const e=effScore(p);
-    return{part:p,score:e.score??0,source:e.source,done:e.progress.done,total:e.progress.total};
-  }).sort((a,b)=>b.score-a.score);
+  const parts=currentParts();
+  const ranked=Object.keys(parts).map(p=>{const e=effScore(p);return{part:p,score:e.score??0,source:e.source,done:e.progress.done,total:e.progress.total};}).sort((a,b)=>b.score-a.score);
   document.getElementById("strongPartsList").innerHTML=ranked.map(item=>`
     <div class="strong-item">
       <strong>${xe(item.part)}</strong>
-      <div style="color:var(--muted);font-size:.9rem;line-height:1.6;margin-top:4px;">
-        Score: <strong style="color:var(--text)">${item.score}%</strong> &nbsp;·&nbsp;
-        Source: ${xe(item.source)} &nbsp;·&nbsp;
-        Progress: ${item.done}/${item.total} chapters
-      </div>
+      <div style="color:var(--muted);font-size:.9rem;line-height:1.6;margin-top:4px;">Score: <strong style="color:var(--text)">${item.score}%</strong> &nbsp;·&nbsp; Source: ${xe(item.source)} &nbsp;·&nbsp; Progress: ${item.done}/${item.total} chapters</div>
     </div>`).join("");
 }
 
-/* ── INIT ── */
+// ── SYLLABUS ──
+function renderSyllabus(courseName){
+  const course=COURSES[courseName];
+  if(!course)return;
+  const container=document.getElementById("sylContent");
+  container.innerHTML=Object.keys(course.parts).map(partKey=>{
+    const part=course.parts[partKey];
+    const pr=courseName===state.selectedCourse?partProgress(partKey):{done:0,total:part.chapters.length,percent:null};
+    const pct=pr.total?Math.round(pr.done/pr.total*100):0;
+    const chapHtml=part.chapters.map(ch=>{
+      const attempted=courseName===state.selectedCourse&&(state.chapterAttempts[chKey(partKey,ch)]||[]).length>0;
+      const latest=courseName===state.selectedCourse?latestCh(partKey,ch):null;
+      return`<div class="syl-ch${attempted?" done":""}">
+        <span class="ch-dot"></span>
+        <span>${xe(ch)}</span>
+        ${latest?`<span class="ch-score">${latest.earned}/${latest.possible}</span>`:""}
+      </div>`;
+    }).join("");
+    return`<div class="syl-part">
+      <div class="syl-part-head">
+        <strong>${xe(partKey)}</strong>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:.82rem;color:var(--muted);font-weight:700">${pr.done}/${pr.total} done</span>
+          <div class="syl-chip">${part.weight}%</div>
+        </div>
+      </div>
+      <div class="syl-progress-bar"><div class="syl-progress-fill" style="width:${pct}%"></div></div>
+      <div style="margin-top:8px" class="syl-chapters">${chapHtml}</div>
+    </div>`;
+  }).join("");
+}
+
+// ── INIT ──
 loadState();
+if(state.selectedCourse){
+  ddCourse.value=state.selectedCourse;
+  const course=COURSES[state.selectedCourse];
+  partLabel.textContent=course.partLabel;
+  ddPart.innerHTML=`<option disabled selected>Select ${course.partLabel}</option>`;
+  Object.keys(course.parts).forEach(p=>{
+    const w=course.parts[p].weight;
+    const o=document.createElement("option");o.value=p;o.textContent=`${p} (${w}%)`;ddPart.appendChild(o);
+  });
+  const weights=Object.values(course.parts).map(p=>p.weight).join(" / ");
+  weightingPill.textContent=`Weighted grading: ${weights}`;
+  topPill.textContent=state.selectedCourse;
+}
 renderDefaultBarChart();
 setStatus("Saved progress loaded");
 </script>
