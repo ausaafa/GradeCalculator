@@ -897,7 +897,19 @@ function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];
 function mkChart(id,cfg){destroyChart(id);const c=document.getElementById(id);if(!c)return;charts[id]=new Chart(c,cfg);}
 const PC=["#111827","#374151","#6b7280","#9ca3af","#d1d5db"];
 const PL=["rgba(17,24,39,.12)","rgba(55,65,81,.12)","rgba(107,114,128,.12)","rgba(156,163,175,.12)","rgba(209,213,219,.12)"];
+function getScoreColor(score){
+  const s = Number(score) || 0;
+  if(s < 50) return "#dc2626";     // red
+  if(s < 70) return "#2563eb";     // blue
+  return "#16a34a";                // green
+}
 
+function getScoreColorLight(score){
+  const s = Number(score) || 0;
+  if(s < 50) return "rgba(220,38,38,.18)";
+  if(s < 70) return "rgba(37,99,235,.18)";
+  return "rgba(22,163,74,.18)";
+}
 function renderDefaultBarChart(){
   if(!state.selectedCourse){
     mkChart("defaultBarChart",{type:"bar",data:{labels:["Select a course to see your grade breakdown"],datasets:[{data:[0],backgroundColor:"rgba(15,23,42,.08)",borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
@@ -910,7 +922,7 @@ function renderDefaultBarChart(){
   mkChart("defaultBarChart",{
     type:"bar",
     data:{labels:parts.map(p=>`${p.split(":")[0]} (${currentParts()[p].weight}%)`),datasets:[
-      {label:"Earned toward final grade",data:achieved,backgroundColor:PC,borderRadius:8,borderWidth:0},
+      {label:"Earned toward final grade",data:achieved,backgroundColor:parts.map(p => getScoreColor(effScore(p).score ?? 0)),borderRadius:8,borderWidth:0},
       {label:"Remaining in section",data:remaining,backgroundColor:PL,borderRadius:8,borderWidth:0}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},
@@ -1076,7 +1088,7 @@ function renderResultsMetrics(){
 }
 function renderSectionBarChart(){
   const parts=currentParts();const pKeys=Object.keys(parts);
-  mkChart("sectionBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.replace(/^(Part|Domain) \d+: /,"").slice(0,22)),datasets:[{label:"Score",data:pKeys.map(p=>effScore(p).score??0),backgroundColor:PC.slice(0,pKeys.length),borderRadius:8,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
+  mkChart("sectionBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.replace(/^(Part|Domain) \d+: /,"").slice(0,22)),datasets:[{label:"Score",data:pKeys.map(p=>effScore(p).score??0),backgroundColor:pKeys.map(p => getScoreColor(effScore(p).score ?? 0)),borderRadius:8,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
 }
 function renderTrendLineChart(){
   const tl=state.attemptTimeline;
@@ -1085,11 +1097,11 @@ function renderTrendLineChart(){
 function renderProgressBarChart(){
   const parts=currentParts();const pKeys=Object.keys(parts);
   const pcts=pKeys.map(p=>{const pr=partProgress(p);return pr.total?Math.round(pr.done/pr.total*100):0;});
-  mkChart("progressBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.split(":")[0].trim()),datasets:[{label:"Completed",data:pcts,backgroundColor:PC.slice(0,pKeys.length),borderRadius:6,borderWidth:0},{label:"Remaining",data:pcts.map(v=>100-v),backgroundColor:PL.slice(0,pKeys.length),borderRadius:6,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},scales:{x:{stacked:true,min:0,max:100,ticks:{stepSize:25,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},y:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}}}}});
+  mkChart("progressBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.split(":")[0].trim()),datasets:[{label:"Completed",data:pcts,backgroundColor:pcts.map(v => getScoreColor(v)),borderRadius:6,borderWidth:0},{label:"Remaining",data:pcts.map(v=>100-v),backgroundColor:pcts.map(v => getScoreColorLight(v)),borderRadius:6,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},scales:{x:{stacked:true,min:0,max:100,ticks:{stepSize:25,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},y:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}}}}});
 }
 function renderChapterAvgChart(){
   const parts=currentParts();const pKeys=Object.keys(parts);
-  mkChart("chapterAvgChart",{type:"doughnut",data:{labels:pKeys.map(p=>p.split(":")[0].trim()),datasets:[{data:pKeys.map(p=>effScore(p).score??0),backgroundColor:PC.slice(0,pKeys.length),borderColor:"#fff",borderWidth:3,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom",labels:{color:"#64748b",font:{size:12},padding:14}}}}});
+  mkChart("chapterAvgChart",{type:"doughnut",data:{labels:pKeys.map(p=>p.split(":")[0].trim()),datasets:[{data:pKeys.map(p=>effScore(p).score??0),backgroundColor:pKeys.map(p => getScoreColor(effScore(p).score ?? 0)),borderColor:"#fff",borderWidth:3,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom",labels:{color:"#64748b",font:{size:12},padding:14}}}}});
 }
 function renderDonuts(){
   const wg=weightedGrade();const proj=projected();
@@ -1098,7 +1110,7 @@ function renderDonuts(){
 }
 function svgDonut(pct,label){
   const r=54,c=2*Math.PI*r,safe=Math.max(0,Math.min(100,Number(pct)||0)),offset=c-(safe/100)*c;
-  return`<svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="12"/><circle cx="75" cy="75" r="${r}" fill="none" stroke="#111827" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 75 75)"/><text x="75" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#0f172a">${safe}%</text><text x="75" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#64748b">${label}</text></svg>`;
+  return`<svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="12"/><circle cx="75" cy="75" r="${r}" fill="none" stroke="${getScoreColor(safe)}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}" transform="rotate(-90 75 75)"/><text x="75" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#0f172a">${safe}%</text><text x="75" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#64748b">${label}</text></svg>`;
 }
 function renderNotice(){
   const wg=weightedGrade();const parts=currentParts();
