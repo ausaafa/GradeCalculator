@@ -133,6 +133,10 @@
     .chart-wrap{position:relative;width:100%;height:260px}
     .chart-wrap.sm{height:220px}
     .chart-wrap.md{height:300px}
+    .breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .breakdown-mini{background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:16px;padding:16px}
+    .breakdown-mini h3{font-size:.96rem;font-weight:800;margin-bottom:4px}
+    .breakdown-mini p{color:var(--muted);font-size:.84rem;line-height:1.45;margin-bottom:12px}
     .part-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#f8fafc;border:1px solid rgba(15,23,42,.08);border-radius:14px;padding:14px 16px;margin-bottom:16px}
     .part-banner strong{font-size:1rem;display:block;margin-bottom:4px}
     .part-banner span{color:var(--muted);font-size:.88rem}
@@ -376,7 +380,7 @@
       body{overflow:auto}
       .app-shell{flex-direction:column;height:auto;min-height:100vh}
       .sidebar{width:100%;min-width:100%}
-      .grid-2,.grid-3,.results-grid,#resultsMetrics{grid-template-columns:1fr}
+      .grid-2,.grid-3,.results-grid,#resultsMetrics,.breakdown-grid{grid-template-columns:1fr}
       .hero h2{font-size:2.2rem}
     }
   </style>
@@ -520,7 +524,7 @@
             <p>Select a course and part to get started. Enter your main exam score per part, or log individual chapter attempts. Click <strong>View Results</strong> for your full weighted grade.</p>
             <div class="card" style="margin-top:24px;text-align:left;">
               <div class="card-title">Grade breakdown</div>
-              <div class="card-sub">How much each weighted section is contributing to your final grade.</div>
+              <div class="card-sub">One graph showing total section weight beside how much of that section you have completed.</div>
               <div class="chart-wrap sm"><canvas id="defaultBarChart"></canvas></div>
             </div>
           </div>
@@ -615,6 +619,55 @@ const COURSES = {
       "Domain 3: Communication & Collaboration (QE)":{weight:20,chapters:["Chapter 91 – Verbal & Non-verbal Communication (QE)","Chapter 92 – Interprofessional Collaboration (QE)","Chapter 93 – Adverse Drug Reactions (QE)","Chapter 94 – Perioperative Management (QE)","Chapter 95 – Complementary & Alternative Therapies (QE)","Chapter 96 – Nutrition Supplements & Herbal Products (QE)"]},
       "Domain 4: Leadership & Stewardship (QE)":{weight:20,chapters:["Chapter 97 – Pharmacy Management (QE)","Chapter 98 – Health Promotion (QE)","Chapter 99 – Withdrawal Management (QE)","Chapter 100 – Smoking Cessation (QE)","Chapter 101 – Drugs in Elderly (QE)","Chapter 102 – Clinical Toxicity (QE)","Chapter 103 – Immunization & Vaccines (QE)"]},
       "Domain 5: Professionalism (QE)":{weight:20,chapters:["Chapter 104 – Healthcare System in Canada (QE)","Chapter 105 – Federal Regulations (QE)","Chapter 106 – Ethical Principles (QE)","Chapter 107 – Pharmacoeconomics (QE)","Chapter 108 – Quality & Patient Safety (QE)","Chapter 109 – Drug Recalls & Warnings (QE)","Chapter 110 – Substance Abuse & Management (QE)"]}
+    }
+  },
+  "PTCB - Pharmacy Technician Certification Board PTCE Prep Course": {
+    partLabel: "Content Area",
+    parts: {
+      "1. Medications": {
+        weight: 35,
+        chapters: [
+          "1.1 Generic names, brand names, and classifications of medications",
+          "1.2 Therapeutic Duplications",
+          "1.3 Common or life-threatening drug interactions and contraindications",
+          "1.4 Strengths/doses, dosage forms, routes of administration, and duration of therapy",
+          "1.5 Common or severe side effects, adverse effects, and allergies",
+          "1.6 Indications of medications",
+          "1.7 Drug stability (e.g., suspensions, insulins, injectables, vaccines)",
+          "1.8 Proper storage (temperature ranges, light sensitivity, restricted access)"
+        ]
+      },
+      "2. Federal Requirements": {
+        weight: 18.75,
+        chapters: [
+          "2.1 Federal requirements for storage, handling, and disposal of hazardous/non-hazardous substances",
+          "2.2 Controlled substance prescription requirements and DEA schedules",
+          "2.3 Requirements for ordering, labeling, dispensing, returning, and destroying controlled substances",
+          "2.4 Federal restricted drug programs and REMS requirements",
+          "2.5 FDA medication recall procedures",
+          "2.6 Drug Supply Chain Security Act (DSCSA) tracking and handling requirements"
+        ]
+      },
+      "3. Patient Safety and Quality Assurance": {
+        weight: 23.75,
+        chapters: [
+          "3.1 High-alert and LASA medications",
+          "3.2 Error prevention strategies (Tall Man lettering, barcode usage, leading/trailing zeros)",
+          "3.3 Issues requiring pharmacist intervention (DUR, ADE, adherence, allergies, interactions)",
+          "3.4 Event reporting procedures (MedWatch, VAERS, CQI, RCA)",
+          "3.5 Types of prescription errors (incorrect dose, quantity, patient, drug, route)",
+          "3.6 Infection prevention and cleaning standards (handwashing, PPE, tray cleaning)"
+        ]
+      },
+      "4. Order Entry and Processing": {
+        weight: 22.5,
+        chapters: [
+          "4.1 Formulas, calculations, ratios, conversions, abbreviations, medical terminology",
+          "4.2 Equipment and supplies for drug administration (e.g., syringes, inhalers, nebulizers)",
+          "4.3 Lot numbers, expiration dates, and NDC numbers",
+          "4.4 Procedures for identifying and returning expired or non-dispensable medications"
+        ]
+      }
     }
   }
 };
@@ -912,22 +965,64 @@ function getScoreColorLight(score){
 }
 function renderDefaultBarChart(){
   if(!state.selectedCourse){
-    mkChart("defaultBarChart",{type:"bar",data:{labels:["Select a course to see your grade breakdown"],datasets:[{data:[0],backgroundColor:"rgba(15,23,42,.08)",borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
+    mkChart("defaultBarChart",{
+      type:"bar",
+      data:{labels:["Select a course"],datasets:[{data:[0],backgroundColor:"rgba(15,23,42,.08)",borderRadius:8}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100},x:{ticks:{color:"#64748b"},grid:{display:false}}}}
+    });
     return;
   }
+
   const parts=Object.keys(currentParts());
-  const achieved=parts.map(p=>{const s=effScore(p).score??0;const w=currentParts()[p].weight;return Math.round(s*w/100*10)/10;});
-  const remaining=parts.map((p,i)=>Math.max(0,Math.round((currentParts()[p].weight-achieved[i])*10)/10));
-  const maxW=Math.max(...parts.map(p=>currentParts()[p].weight));
+  const labels=parts.map(p=>`${p.split(":")[0]} (${currentParts()[p].weight}%)`);
+  const weights=parts.map(p=>currentParts()[p].weight);
+  const completedWeight=parts.map(p=>{
+    const pr=partProgress(p);
+    const ratio=pr.total ? pr.done / pr.total : 0;
+    return Math.round(currentParts()[p].weight * ratio * 10) / 10;
+  });
+  const maxW=Math.max(...weights)+5;
+
   mkChart("defaultBarChart",{
     type:"bar",
-    data:{labels:parts.map(p=>`${p.split(":")[0]} (${currentParts()[p].weight}%)`),datasets:[
-      {label:"Earned toward final grade",data:achieved,backgroundColor:parts.map(p => getScoreColor(effScore(p).score ?? 0)),borderRadius:8,borderWidth:0},
-      {label:"Remaining in section",data:remaining,backgroundColor:PL,borderRadius:8,borderWidth:0}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},
-      scales:{x:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}},
-        y:{stacked:true,min:0,max:maxW+5,ticks:{color:"#64748b",stepSize:5},grid:{color:"rgba(15,23,42,.05)"},title:{display:true,text:"Contribution to final grade (%)",color:"#64748b"}}}}
+    data:{
+      labels,
+      datasets:[
+        {
+          label:"Total section weight",
+          data:weights,
+          backgroundColor:parts.map((_,i)=>PC[i%PC.length]),
+          borderRadius:8,
+          borderWidth:0,
+          categoryPercentage:0.72,
+          barPercentage:0.82
+        },
+        {
+          label:"Completed so far",
+          data:completedWeight,
+          backgroundColor:parts.map(p=>getScoreColor(partProgress(p).total?Math.round(partProgress(p).done/partProgress(p).total*100):0)),
+          borderRadius:8,
+          borderWidth:0,
+          categoryPercentage:0.72,
+          barPercentage:0.82
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:"#64748b",font:{size:12}}}},
+      scales:{
+        x:{ticks:{color:"#64748b"},grid:{display:false}},
+        y:{
+          min:0,
+          max:maxW,
+          ticks:{color:"#64748b",stepSize:5},
+          grid:{color:"rgba(15,23,42,.05)"},
+          title:{display:true,text:"Section weight (%)",color:"#64748b"}
+        }
+      }
+    }
   });
 }
 
