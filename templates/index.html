@@ -376,6 +376,141 @@
     .syl-progress-bar{height:6px;border-radius:99px;background:#e2e8f0;margin-top:6px;overflow:hidden}
     .syl-progress-fill{height:100%;background:#111827;border-radius:99px;transition:.3s ease}
 
+
+    /* ── PROFESSIONAL PATCH: course-first workflow, sharper black buttons ── */
+    .field.hidden-workflow-field{display:none!important}
+    .side-btn,.primary-btn,.secondary-btn,.mini-btn,.add-btn,.top-back-btn,.modal-close,.qs-chip{
+      border-radius:4px!important;
+    }
+    .side-btn,.primary-btn,.mini-btn,.add-btn{
+      background:#050505!important;
+      color:#fff!important;
+      border:1px solid #050505!important;
+      box-shadow:none!important;
+      letter-spacing:.01em;
+    }
+    .secondary-btn,.top-back-btn{
+      background:#050505!important;
+      color:#fff!important;
+      border:1px solid #050505!important;
+      box-shadow:none!important;
+    }
+    .side-btn:hover,.primary-btn:hover,.secondary-btn:hover,.mini-btn:hover,.add-btn:hover,.top-back-btn:hover{
+      background:#1a1a1a!important;
+      border-color:#1a1a1a!important;
+      transform:translateY(-1px);
+    }
+    .sidebar-actions{height:auto!important;gap:10px!important}
+    .side-btn{flex:0 0 auto!important;min-height:54px!important;text-transform:uppercase;font-size:.92rem!important}
+    .input-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .input-head h2{font-size:1.55rem;font-weight:800;letter-spacing:-.04em;margin-bottom:5px}
+    .input-head p{color:var(--muted);font-size:.95rem;line-height:1.5}
+    .course-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+    .summary-tile{background:#fff;border:1px solid rgba(15,23,42,.08);border-radius:10px;padding:16px}
+    .summary-tile strong{display:block;font-size:1.35rem;letter-spacing:-.03em;margin-bottom:2px}
+    .summary-tile span{color:var(--muted);font-size:.82rem;font-weight:700}
+    .entry-list{display:grid;gap:14px}
+    .entry-part{background:#fff;border:1px solid rgba(15,23,42,.10);border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(15,23,42,.035)}
+    .entry-part-head{padding:18px 20px;background:#f8fafc;border-bottom:1px solid rgba(15,23,42,.07);display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .entry-part-head h3{font-size:1.05rem;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
+    .entry-part-head p{color:var(--muted);font-size:.86rem;font-weight:600}
+    .entry-weight{background:#050505;color:#fff;border-radius:4px;padding:9px 12px;font-size:.82rem;font-weight:800;white-space:nowrap}
+    .entry-part-body{padding:18px 20px;display:grid;gap:16px}
+    .part-score-row{display:grid;grid-template-columns:1fr 170px;gap:10px;align-items:end}
+    .chapter-toggle{width:100%;height:48px;border-radius:4px;border:1px solid #050505;background:#050505;color:#fff;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;letter-spacing:.02em}
+    .chapter-toggle:hover{background:#1a1a1a}
+    .chapter-panel{display:none;border-top:1px solid rgba(15,23,42,.08);padding-top:14px}
+    .chapter-panel.open{display:block;animation:fadeIn .16s ease}
+    .chapter-search{margin-bottom:12px}
+    .chapter-search input{height:48px;border-radius:6px;font-size:.92rem;font-weight:600}
+    .chapter-entry-list{display:grid;gap:10px;max-height:520px;overflow:auto;padding-right:4px}
+    .chapter-entry{border:1px solid rgba(15,23,42,.08);border-radius:10px;background:#fbfcfd;padding:12px;display:grid;grid-template-columns:minmax(220px,1fr) 120px 120px 118px;gap:10px;align-items:center}
+    .chapter-entry-title{font-size:.88rem;font-weight:750;line-height:1.35;color:#111827}
+    .chapter-entry-meta{font-size:.78rem;color:var(--muted);margin-top:4px;font-weight:650}
+    .chapter-entry input{height:42px;border-radius:6px;font-size:.94rem;font-weight:800}
+    .chapter-entry button{height:42px;border-radius:4px;border:1px solid #050505;background:#050505;color:#fff;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif}
+    .chapter-entry button:hover{background:#1a1a1a}
+    .delete-mini{background:#fff!important;color:#111827!important;border-color:rgba(15,23,42,.18)!important}
+    .results-compact-note{margin-bottom:18px}
+
+    .part-picker-card{background:#fff;border:1px solid rgba(15,23,42,.10);border-radius:12px;padding:18px 20px;box-shadow:0 8px 20px rgba(15,23,42,.035);margin-bottom:14px}
+    .part-picker-row{display:grid;grid-template-columns:1fr 180px;gap:12px;align-items:end}
+    .selected-part-panel{background:#fff;border:1px solid rgba(15,23,42,.10);border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(15,23,42,.035)}
+    .chapter-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px}
+    .chapter-section-head strong{font-size:.98rem;font-weight:800}
+    .chapter-section-head span{color:var(--muted);font-size:.84rem;font-weight:700}
+    .show-more-btn{height:46px;border-radius:4px;border:1px solid #050505;background:#050505;color:#fff;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:.02em;font-family:'Inter',sans-serif;margin-top:10px;width:100%}
+    .show-more-btn:hover{background:#1a1a1a}
+    .readiness-table{width:100%;border-collapse:collapse;overflow:hidden;border:1px solid rgba(15,23,42,.10);border-radius:10px;background:#fff}
+    .readiness-table th{background:#050505;color:#fff;text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;padding:13px 14px}
+    .readiness-table td{padding:14px;border-top:1px solid rgba(15,23,42,.08);font-size:.9rem;vertical-align:top}
+    .status-ready,.status-not-ready{display:inline-flex;align-items:center;padding:7px 10px;border-radius:4px;font-weight:800;font-size:.78rem;white-space:nowrap}
+    .status-ready{background:#ecfdf5;color:#166534;border:1px solid #bbf7d0}
+    .status-not-ready{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+    .readiness-action{color:#475569;line-height:1.45;font-weight:650}
+
+    /* ── FINAL POLISH: lock sidebar buttons between status and sidebar bottom ── */
+    .sidebar{
+      overflow:hidden;
+    }
+    .sidebar-actions{
+      margin-top:12px!important;
+      padding-top:0!important;
+      flex:1 1 auto!important;
+      min-height:0!important;
+      height:auto!important;
+      display:flex!important;
+      flex-direction:column!important;
+      gap:10px!important;
+    }
+    .side-btn{
+      flex:1 1 0!important;
+      height:auto!important;
+      min-height:48px!important;
+      border-radius:2px!important;
+      background:#000!important;
+      border:1px solid #000!important;
+      color:#fff!important;
+      box-shadow:none!important;
+    }
+    .side-btn:hover{
+      background:#171717!important;
+      border-color:#171717!important;
+      transform:translateY(-1px)!important;
+    }
+    .primary-btn,.secondary-btn,.mini-btn,.add-btn,.top-back-btn,.modal-close,.qs-chip{
+      border-radius:8px!important;
+      box-shadow:0 6px 14px rgba(15,23,42,.08)!important;
+    }
+    .primary-btn,.mini-btn,.add-btn{
+      background:#111827!important;
+      border-color:#111827!important;
+    }
+    .secondary-btn,.top-back-btn{
+      background:#1f2937!important;
+      color:#fff!important;
+      border-color:#1f2937!important;
+    }
+    .primary-btn:hover,.secondary-btn:hover,.mini-btn:hover,.add-btn:hover,.top-back-btn:hover{
+      background:#0f172a!important;
+      border-color:#0f172a!important;
+      box-shadow:0 8px 18px rgba(15,23,42,.12)!important;
+      transform:translateY(-1px)!important;
+    }
+    .qs-chip{
+      background:#f8fafc!important;
+      color:#111827!important;
+      border:1px solid rgba(15,23,42,.16)!important;
+      box-shadow:none!important;
+    }
+    .qs-chip:hover,.qs-chip.active{
+      background:#111827!important;
+      color:#fff!important;
+      border-color:#111827!important;
+    }
+
+    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row{grid-template-columns:1fr}.input-head{flex-direction:column}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
+
     @media(max-width:1200px){
       body{overflow:auto}
       .app-shell{flex-direction:column;height:auto;min-height:100vh}
@@ -484,13 +619,13 @@
   <option value="" selected>Select course</option>
 </select>
     </div>
-    <div class="field">
+    <div class="field hidden-workflow-field">
       <label for="ddPart" id="partLabel">Part</label>
       <select id="ddPart" disabled>
   <option value="" selected>Select Part</option>
 </select>
     </div>
-    <div class="field">
+    <div class="field hidden-workflow-field">
       <label for="ddChapter">Chapter</label>
       <select id="ddChapter" disabled><option disabled selected>Select Chapter</option></select>
     </div>
@@ -500,6 +635,7 @@
     <div class="sidebar-actions">
       <button class="side-btn" id="viewResultsBtn">View Results</button>
       <button class="side-btn outline-btn" id="resetBtn">Reset</button>
+      <button class="side-btn outline-btn" id="syllabusBtn">Syllabus</button>
       <button class="side-btn outline-btn" id="infoBtn">Info</button>
     </div>
   </aside>
@@ -521,12 +657,30 @@
           <div class="hero-inner">
             <div class="hero-mark"></div>
             <h2>Exam Assessment Dashboard</h2>
-            <p>Select a course and part to get started. Enter your main exam score per part, or log individual chapter attempts. Click <strong>View Results</strong> for your full weighted grade.</p>
+            <p>Select a course to open one clean grade-entry workspace. Enter section scores first, then expand chapters only when you want to log quiz attempts. Results stay separate until you click <strong>View Results</strong>.</p>
             <div class="card" style="margin-top:24px;text-align:left;">
               <div class="card-title">Grade breakdown</div>
               <div class="card-sub">One graph showing total section weight beside how much of that section you have completed.</div>
               <div class="chart-wrap sm"><canvas id="defaultBarChart"></canvas></div>
             </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- COURSE GRADE ENTRY -->
+      <section class="view" id="inputView">
+        <div class="stack">
+          <div class="card">
+            <div class="input-head">
+              <div>
+                <h2 id="inputCourseTitle">Course grade entry</h2>
+                <p>Enter all section scores on this page. Chapter scoring is optional and stays collapsed until you expand a section.</p>
+              </div>
+              <button class="primary-btn" id="inputViewResultsBtn">View Results</button>
+            </div>
+            <div class="course-summary-grid" id="courseSummaryGrid"></div>
+            <div class="entry-list" id="gradeEntryPanel"></div>
           </div>
         </div>
       </section>
@@ -566,23 +720,17 @@
       <!-- RESULTS VIEW -->
       <section class="view" id="resultsView">
         <div class="stack">
-          <div class="card">
-            <div class="card-title">Results overview</div>
-            <div class="card-sub">Your weighted grade, strongest parts, progress, and overall trend.</div>
-            <div id="resultsMetrics"></div>
-            <div class="donut-row" id="donutWrap"></div>
-            <div class="notice" id="completionNotice"></div>
-          </div>
+          <div class="notice results-compact-note" id="completionNotice"></div>
           <div class="results-grid">
-            <div class="chart-card"><h3>Part performance</h3><p>Which parts you are doing best in right now.</p><div class="chart-wrap md"><canvas id="sectionBarChart"></canvas></div></div>
+            <div class="chart-card"><h3>Part performance</h3><p>Grade breakdown by section, with the colored portion showing how much you have earned so far.</p><div class="chart-wrap md"><canvas id="sectionBarChart"></canvas></div></div>
             <div class="chart-card"><h3>Improvement trend</h3><p>Trend from all chapter attempts in the order entered.</p><div class="chart-wrap md"><canvas id="trendLineChart"></canvas></div></div>
             <div class="chart-card"><h3>Chapter completion</h3><p>How much of each part you have scored so far.</p><div class="chart-wrap md"><canvas id="progressBarChart"></canvas></div></div>
             <div class="chart-card"><h3>Score source</h3><p>Effective score per part — part exam if saved, otherwise chapter average.</p><div class="chart-wrap md"><canvas id="chapterAvgChart"></canvas></div></div>
           </div>
-          <div class="card">
-            <div class="card-title">Strongest parts so far</div>
-            <div class="card-sub">Ordered from strongest to weakest.</div>
-            <div class="strong-list" id="strongPartsList"></div>
+          <div class="card readiness-card">
+            <div class="card-title">Quantitative readiness matrix</div>
+            <div class="card-sub">A clear target-based checklist for each section, using the saved part score first and chapter average when no part score is entered.</div>
+            <div id="readinessMatrix"></div>
           </div>
         </div>
       </section>
@@ -675,6 +823,8 @@ const COURSES = {
 const QUIZ_MAX = 10; // All Test Yourself quizzes are out of 10
 
 const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[]};
+let inputSelectedPart="";
+let inputShowAllChapters=false;
 const charts={};
 const viewStack=["defaultView"];
 const STORAGE_KEY="pharmacyprep-v2-state";
@@ -734,6 +884,8 @@ ddCourse.addEventListener("change",()=>{
   state.selectedCourse = ddCourse.value;
   state.selectedPart = "";
   state.selectedChapter = "";
+  inputSelectedPart = "";
+  inputShowAllChapters = false;
 
   if(!state.selectedCourse){
     ddPart.innerHTML = '<option value="" selected>Select Part</option>';
@@ -778,8 +930,11 @@ ddCourse.addEventListener("change",()=>{
   topPill.textContent = state.selectedCourse;
   setStatus("Course selected");
 
-  destroyChart("defaultBarChart");
-  renderDefaultBarChart();
+  viewStack.length = 0;
+  viewStack.push("inputView");
+  showView("inputView");
+  backBtn.style.display = "none";
+  renderGradeEntryView();
 });
 ddPart.addEventListener("change",()=>{
   state.selectedPart=ddPart.value;
@@ -802,6 +957,10 @@ ddChapter.addEventListener("change",()=>{
 });
 
 document.getElementById("viewResultsBtn").addEventListener("click",()=>{
+  if(!state.selectedCourse){setStatus("Select a course first");return;}
+  pushView("resultsView");renderResultsView();setStatus("Results loaded");
+});
+document.getElementById("inputViewResultsBtn").addEventListener("click",()=>{
   if(!state.selectedCourse){setStatus("Select a course first");return;}
   pushView("resultsView");renderResultsView();setStatus("Results loaded");
 });
@@ -833,6 +992,12 @@ document.getElementById("resetBtn").addEventListener("click",()=>{
 });
 document.getElementById("infoBtn").addEventListener("click",()=>{
   document.getElementById("infoModal").classList.add("open");
+});
+document.getElementById("syllabusBtn").addEventListener("click",()=>{
+  const courseName = state.selectedCourse || Object.keys(COURSES)[0];
+  sylCourseSelect.value = courseName;
+  renderSyllabus(courseName);
+  document.getElementById("syllabusModal").classList.add("open");
 });
 
 document.getElementById("infoModalClose").addEventListener("click",()=>{
@@ -908,7 +1073,7 @@ function pushView(id){
   if(viewStack[viewStack.length-1]!==id)viewStack.push(id);
   showView(id);
   backBtn.style.display=viewStack.length>1?"":"none";
-  const labels={defaultView:state.selectedCourse||"Select a course",partView:state.selectedPart?state.selectedPart.split(":")[0].trim():"Part",chapterView:state.selectedChapter?trunc(state.selectedChapter,28):"Chapter",resultsView:"Full results"};
+  const labels={defaultView:state.selectedCourse||"Select a course",inputView:state.selectedCourse||"Grade entry",partView:state.selectedPart?state.selectedPart.split(":")[0].trim():"Part",chapterView:state.selectedChapter?trunc(state.selectedChapter,28):"Chapter",resultsView:"Full results"};
   topPill.textContent=labels[id]||"PharmacyPrep";
 }
 function showView(id){
@@ -1163,11 +1328,161 @@ window.deleteAttempt=function(idx){
   renderChapterView();destroyChart("defaultBarChart");renderDefaultBarChart();
 };
 
+
+// ── COURSE GRADE ENTRY WORKSPACE ──
+function renderGradeEntryView(){
+  if(!state.selectedCourse)return;
+  const course=currentCourse();
+  const parts=currentParts();
+  const pKeys=Object.keys(parts);
+  if(!inputSelectedPart || !parts[inputSelectedPart]) inputSelectedPart=pKeys[0]||"";
+  const totalChapters=pKeys.reduce((sum,p)=>sum+parts[p].chapters.length,0);
+  const completedChapters=pKeys.reduce((sum,p)=>sum+partProgress(p).done,0);
+  const weights=pKeys.map(p=>parts[p].weight).join(" / ");
+  document.getElementById("inputCourseTitle").textContent=state.selectedCourse;
+  document.getElementById("courseSummaryGrid").innerHTML=`
+    <div class="summary-tile"><strong>${pKeys.length}</strong><span>${xe(course.partLabel)} sections</span></div>
+    <div class="summary-tile"><strong>${totalChapters}</strong><span>Available chapters</span></div>
+    <div class="summary-tile"><strong>${completedChapters}/${totalChapters}</strong><span>Chapters scored</span></div>`;
+  weightingPill.textContent=`Weighted grading: ${weights}`;
+  topPill.textContent=state.selectedCourse;
+  const options=pKeys.map(p=>`<option value="${xe(p)}" ${p===inputSelectedPart?"selected":""}>${xe(p)} (${parts[p].weight}%)</option>`).join("");
+  document.getElementById("gradeEntryPanel").innerHTML=`
+    <div class="part-picker-card">
+      <div class="part-picker-row">
+        <div>
+          <label class="subtle-label" for="inputPartSelect">Choose ${xe(course.partLabel.toLowerCase())}</label>
+          <select id="inputPartSelect" onchange="selectInputPart(this.value)">${options}</select>
+        </div>
+        <button class="primary-btn" onclick="renderGradeEntryView()">Refresh</button>
+      </div>
+    </div>
+    ${inputSelectedPart?renderSelectedPartEntry(inputSelectedPart):""}`;
+}
+function selectInputPart(partKey){
+  inputSelectedPart=partKey;
+  state.selectedPart=partKey;
+  inputShowAllChapters=false;
+  renderGradeEntryView();
+  setStatus(`${currentCourse().partLabel} selected`);
+}
+function renderSelectedPartEntry(partKey){
+  const part=currentParts()[partKey];
+  const pr=partProgress(partKey);
+  const pKeys=Object.keys(currentParts());
+  const idx=Math.max(0,pKeys.indexOf(partKey));
+  const partScore=state.partExamScores[partKey]??"";
+  const visibleCount=inputShowAllChapters?part.chapters.length:Math.min(6,part.chapters.length);
+  const visibleChapters=part.chapters.slice(0,visibleCount);
+  const chapterRows=visibleChapters.map((ch,i)=>renderChapterEntryRow(partKey,ch,i)).join("");
+  const hiddenCount=Math.max(0,part.chapters.length-visibleCount);
+  return `<div class="selected-part-panel">
+    <div class="entry-part-head">
+      <div>
+        <h3>${xe(partKey)}</h3>
+        <p>${pr.done}/${pr.total} chapters scored${pr.percent!==null?` · chapter average ${pr.percent}%`:""}</p>
+      </div>
+      <div class="entry-weight">${part.weight}% weight</div>
+    </div>
+    <div class="entry-part-body">
+      <div class="part-score-row">
+        <div>
+          <label class="subtle-label">Main ${xe(currentCourse().partLabel.toLowerCase())} exam score</label>
+          <input id="partScore_${idx}" type="number" min="0" max="100" step="0.1" placeholder="Enter score out of 100" value="${partScore}">
+        </div>
+        <button class="primary-btn" onclick="savePartExamFor('${encodeURIComponent(partKey)}',${idx})">Save Score</button>
+      </div>
+      <div>
+        <div class="chapter-section-head">
+          <div><strong>Add chapter score</strong><br><span>Showing ${visibleCount} of ${part.chapters.length} chapters for the selected ${xe(currentCourse().partLabel.toLowerCase())}</span></div>
+          <span>${pr.done}/${pr.total} completed</span>
+        </div>
+        <div class="chapter-search"><input type="text" placeholder="Filter visible chapters..." oninput="filterVisibleChapterRows(this.value)"></div>
+        <div class="chapter-entry-list">${chapterRows}</div>
+        ${part.chapters.length>6?`<button class="show-more-btn" onclick="toggleChapterList()">${inputShowAllChapters?"Show fewer chapters":"Show all chapters"}${hiddenCount?` (${hiddenCount} more)`:""}</button>`:""}
+      </div>
+    </div>
+  </div>`;
+}
+function renderChapterEntryRow(partKey,chapter,chapterIdx){
+  const attempts=state.chapterAttempts[chKey(partKey,chapter)]||[];
+  const latest=attempts.length?attempts[attempts.length-1]:null;
+  const inputId=`ch_${Math.abs(hashCode(partKey+chapter))}`;
+  const rowId=`row_${Math.abs(hashCode(partKey+chapter))}`;
+  return `<div class="chapter-entry" id="${rowId}" data-search="${xe((partKey+' '+chapter).toLowerCase())}">
+    <div>
+      <div class="chapter-entry-title">${xe(chapter)}</div>
+      <div class="chapter-entry-meta">${latest?`Latest: ${latest.earned}/${latest.possible} · ${latest.score}% · ${attempts.length} attempt${attempts.length===1?"":"s"}`:"No attempts yet"}</div>
+    </div>
+    <input id="${inputId}" type="number" min="0" max="10" step="1" placeholder="0–10">
+    <button onclick="saveChapterAttemptFor('${encodeURIComponent(partKey)}','${encodeURIComponent(chapter)}','${inputId}')">Add /10</button>
+    <button class="delete-mini" onclick="deleteLatestChapterAttemptFor('${encodeURIComponent(partKey)}','${encodeURIComponent(chapter)}')">Undo</button>
+  </div>`;
+}
+function toggleChapterList(){
+  inputShowAllChapters=!inputShowAllChapters;
+  renderGradeEntryView();
+}
+function filterVisibleChapterRows(value){
+  const panel=document.getElementById("gradeEntryPanel");
+  if(!panel)return;
+  const q=String(value||"").toLowerCase().trim();
+  panel.querySelectorAll(".chapter-entry").forEach(row=>{
+    row.style.display=row.dataset.search.includes(q)?"grid":"none";
+  });
+}
+function toggleChapterPanel(idx){toggleChapterList();}
+function filterChapterRows(idx,value){filterVisibleChapterRows(value);}
+function savePartExamFor(encodedPart,idx){
+  const partKey=decodeURIComponent(encodedPart);
+  const inp=document.getElementById(`partScore_${idx}`);
+  const raw=inp?inp.value:"";
+  if(raw===""){
+    delete state.partExamScores[partKey];
+    saveState();setStatus("Section score cleared");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();return;
+  }
+  const v=Math.max(0,Math.min(100,Math.round(parseFloat(raw)*10)/10));
+  if(isNaN(v)){setStatus("Enter a score from 0 to 100");return;}
+  state.partExamScores[partKey]=v;
+  saveState();setStatus("Section score saved");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
+}
+function saveChapterAttemptFor(encodedPart,encodedChapter,inputId){
+  const partKey=decodeURIComponent(encodedPart);
+  const chapter=decodeURIComponent(encodedChapter);
+  const inp=document.getElementById(inputId);
+  const earned=parseInt(inp?inp.value:"",10);
+  if(isNaN(earned)||earned<0||earned>QUIZ_MAX){setStatus(`Score must be between 0 and ${QUIZ_MAX}`);return;}
+  const key=chKey(partKey,chapter);
+  if(!state.chapterAttempts[key])state.chapterAttempts[key]=[];
+  const n=state.chapterAttempts[key].length+1;
+  const percent=Math.round(earned/QUIZ_MAX*1000)/10;
+  const entry={part:partKey,chapter,label:`Attempt ${n}`,earned,possible:QUIZ_MAX,score:percent,timestamp:new Date().toLocaleString()};
+  state.chapterAttempts[key].push(entry);
+  state.attemptTimeline.push(entry);
+  saveState();setStatus("Chapter attempt saved");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
+}
+function deleteLatestChapterAttemptFor(encodedPart,encodedChapter){
+  const partKey=decodeURIComponent(encodedPart);
+  const chapter=decodeURIComponent(encodedChapter);
+  const key=chKey(partKey,chapter);
+  const arr=state.chapterAttempts[key]||[];
+  if(!arr.length){setStatus("No attempt to remove");return;}
+  const removed=arr.pop();
+  const ti=state.attemptTimeline.findLastIndex(t=>t.part===removed.part&&t.chapter===removed.chapter&&t.score===removed.score&&t.earned===removed.earned);
+  if(ti>=0)state.attemptTimeline.splice(ti,1);
+  saveState();setStatus("Latest chapter attempt removed");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
+}
+function hashCode(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}
+  return h;
+}
+
 // ── RESULTS ──
 function renderResultsView(){
-  renderResultsMetrics();renderSectionBarChart();renderTrendLineChart();
-  renderProgressBarChart();renderChapterAvgChart();renderDonuts();
-  renderNotice();renderStrongParts();
+  renderSectionBarChart();renderTrendLineChart();
+  renderProgressBarChart();renderChapterAvgChart();
+  renderNotice();renderReadinessMatrix();
 }
 function renderResultsMetrics(){
   const wg=weightedGrade();const proj=projected();
@@ -1182,8 +1497,62 @@ function renderResultsMetrics(){
     <div class="card" style="text-align:center"><div class="card-title">${state.attemptTimeline.length?Math.round(state.attemptTimeline.reduce((s,i)=>s+i.score,0)/state.attemptTimeline.length*10)/10:0}%</div><div class="card-sub" style="margin-bottom:0">Avg attempt score</div></div>`;
 }
 function renderSectionBarChart(){
-  const parts=currentParts();const pKeys=Object.keys(parts);
-  mkChart("sectionBarChart",{type:"bar",data:{labels:pKeys.map(p=>p.replace(/^(Part|Domain) \d+: /,"").slice(0,22)),datasets:[{label:"Score",data:pKeys.map(p=>effScore(p).score??0),backgroundColor:pKeys.map(p => getScoreColor(effScore(p).score ?? 0)),borderRadius:8,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{stepSize:20,color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"}},x:{ticks:{color:"#64748b"},grid:{display:false}}}}});
+  const parts=currentParts();
+  const pKeys=Object.keys(parts);
+  const weights=pKeys.map(p=>Number(parts[p].weight)||0);
+  const earned=pKeys.map(p=>{
+    const score=effScore(p).score;
+    return score==null ? 0 : Math.round((Number(parts[p].weight)||0) * score / 100 * 10) / 10;
+  });
+  const remaining=pKeys.map((p,i)=>Math.max(0,Math.round((weights[i]-earned[i])*10)/10));
+  const labels=pKeys.map(p=>p.replace(/^(Part|Domain) \d+: /,"").slice(0,28));
+  const maxWeight=Math.max(10,...weights);
+
+  mkChart("sectionBarChart",{
+    type:"bar",
+    data:{
+      labels,
+      datasets:[
+        {
+          label:"Your earned grade points",
+          data:earned,
+          backgroundColor:pKeys.map(p=>getScoreColor(effScore(p).score ?? 0)),
+          borderRadius:6,
+          borderWidth:0,
+          stack:"grade"
+        },
+        {
+          label:"Remaining section weight",
+          data:remaining,
+          backgroundColor:"rgba(15,23,42,.12)",
+          borderRadius:6,
+          borderWidth:0,
+          stack:"grade"
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      indexAxis:"y",
+      plugins:{
+        legend:{display:true,labels:{color:"#64748b",font:{size:12}}},
+        tooltip:{
+          callbacks:{
+            afterBody:function(items){
+              const i=items[0].dataIndex;
+              const score=effScore(pKeys[i]).score;
+              return `Section weight: ${weights[i]}% | Current score: ${score==null?"not entered":score+"%"}`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{stacked:true,min:0,max:maxWeight,ticks:{color:"#64748b"},grid:{color:"rgba(15,23,42,.05)"},title:{display:true,text:"Final-grade weight (%)",color:"#64748b"}},
+        y:{stacked:true,ticks:{color:"#64748b"},grid:{display:false}}
+      }
+    }
+  });
 }
 function renderTrendLineChart(){
   const tl=state.attemptTimeline;
@@ -1215,6 +1584,40 @@ function renderNotice(){
   if(missing.length)html+=` Missing data for: <strong>${missing.map(p=>xe(p.split(":")[0])).join(", ")}</strong>.`;
   if(!missing.length)html+=" Full coverage — great work!";
   document.getElementById("completionNotice").innerHTML=html;
+}
+function readinessTarget(){return 70;}
+function readinessAction(score,coverage){
+  const target=readinessTarget();
+  if(score===null)return "Enter a part score or add chapter attempts to calculate readiness.";
+  if(coverage===0)return "Add chapter attempts so the score is backed by practice data.";
+  if(score>=target)return "Maintain performance and keep reviewing missed questions.";
+  const gap=Math.round((target-score)*10)/10;
+  return `Raise this section by ${gap}%: review weak chapters, redo missed questions, then add another attempt.`;
+}
+function renderReadinessMatrix(){
+  const box=document.getElementById("readinessMatrix");
+  if(!box)return;
+  const parts=currentParts();
+  const target=readinessTarget();
+  const rows=Object.keys(parts).map(p=>{
+    const e=effScore(p);
+    const score=e.score;
+    const ready=score!==null && score>=target;
+    const yourScore=score===null?"—":`${score}%`;
+    const status=ready?'<span class="status-ready">Ready</span>':'<span class="status-not-ready">Not Ready</span>';
+    const coverage=e.progress.done;
+    return `<tr>
+      <td><strong>${xe(p)}</strong><br><span style="color:var(--muted);font-size:.82rem;font-weight:650">${e.progress.done}/${e.progress.total} chapters scored · ${xe(e.source)}</span></td>
+      <td>${yourScore}</td>
+      <td>${target}%</td>
+      <td>${status}</td>
+      <td class="readiness-action">${xe(readinessAction(score,coverage))}</td>
+    </tr>`;
+  }).join("");
+  box.innerHTML=`<table class="readiness-table">
+    <thead><tr><th>Section</th><th>Your Score</th><th>Target Score</th><th>Status</th><th>Action required</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 function renderStrongParts(){
   const parts=currentParts();
