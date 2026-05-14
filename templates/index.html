@@ -431,6 +431,13 @@
     .chapter-entry button{height:42px;border-radius:4px;border:1px solid #050505;background:#050505;color:#fff;font-weight:800;cursor:pointer;font-family:'Inter',sans-serif}
     .chapter-entry button:hover{background:#1a1a1a}
     .delete-mini{background:#fff!important;color:#111827!important;border-color:rgba(15,23,42,.18)!important}
+    .self-assess-select{height:42px;border-radius:7px!important;font-size:.82rem!important;font-weight:750!important;padding:0 10px!important;background:#fff!important}
+    .chapter-discuss-actions{display:flex;align-items:center;justify-content:center;gap:7px}
+    .chapter-discuss-btn{width:38px!important;height:38px!important;min-width:38px!important;border-radius:8px!important;border:1px solid rgba(15,23,42,.14)!important;background:#fff!important;color:#111827!important;font-size:1.08rem!important;box-shadow:none!important;padding:0!important;display:grid!important;place-items:center!important;transition:.15s ease!important}
+    .chapter-discuss-btn:hover{background:#f1f5f9!important;border-color:#94a3b8!important;transform:translateY(-1px)!important}
+    .chapter-discuss-btn.active{background:#050505!important;color:#fff!important;border-color:#050505!important}
+    .chapter-entry{grid-template-columns:minmax(220px,1fr) 88px 166px 142px 104px!important}
+    .self-type-note{margin-top:8px;padding:10px 12px;border:1px solid rgba(15,23,42,.08);background:#f8fafc;border-radius:8px;color:#475569;font-size:.82rem;font-weight:650;line-height:1.4}
     .results-compact-note{margin-bottom:18px}
 
     .part-picker-card{background:#fff;border:1px solid rgba(15,23,42,.10);border-radius:12px;padding:18px 20px;box-shadow:0 8px 20px rgba(15,23,42,.035);margin-bottom:14px}
@@ -509,7 +516,7 @@
       border-color:#111827!important;
     }
 
-    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row{grid-template-columns:1fr}.input-head{flex-direction:column}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
+    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row{grid-template-columns:1fr!important}.input-head{flex-direction:column}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
 
     @media(max-width:1200px){
       body{overflow:auto}
@@ -821,8 +828,10 @@ const COURSES = {
 };
 
 const QUIZ_MAX = 10; // All Test Yourself quizzes are out of 10
+const SELF_ASSESSMENT_TYPES = ["Recall","Problem Solving","Critical Thinking","Math Calculations","Regulations & Ethics"];
+const DISCUSSION_REACTIONS = {up:"👍", neutral:"😐", down:"👎"};
 
-const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[]};
+const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[],chapterFeedback:{}};
 let inputSelectedPart="";
 let inputShowAllChapters=false;
 const charts={};
@@ -834,7 +843,8 @@ function saveState(){
     selectedCourse:state.selectedCourse,
     partExamScores:state.partExamScores,
     chapterAttempts:state.chapterAttempts,
-    attemptTimeline:state.attemptTimeline
+    attemptTimeline:state.attemptTimeline,
+    chapterFeedback:state.chapterFeedback
   }));
 }
 function loadState(){
@@ -846,6 +856,7 @@ function loadState(){
     state.partExamScores = s.partExamScores || {};
     state.chapterAttempts = s.chapterAttempts || {};
     state.attemptTimeline = s.attemptTimeline || [];
+    state.chapterFeedback = s.chapterFeedback || {};
   }catch(e){}
 }
 
@@ -1394,10 +1405,11 @@ function renderSelectedPartEntry(partKey){
       </div>
       <div>
         <div class="chapter-section-head">
-          <div><strong>Add chapter score</strong><br><span>Showing ${visibleCount} of ${part.chapters.length} chapters for the selected ${xe(currentCourse().partLabel.toLowerCase())}</span></div>
+          <div><strong>Add chapter score</strong><br><span>Choose a self-assessment type, enter the score, then mark how confident you feel for discussion.</span></div>
           <span>${pr.done}/${pr.total} completed</span>
         </div>
         <div class="chapter-search"><input type="text" placeholder="Filter visible chapters..." oninput="filterVisibleChapterRows(this.value)"></div>
+        <div class="self-type-note"><strong>Self Assessment — Types of questions:</strong> Recall · Problem Solving · Critical Thinking · Math Calculations · Regulations &amp; Ethics</div>
         <div class="chapter-entry-list">${chapterRows}</div>
         ${part.chapters.length>6?`<button class="show-more-btn" onclick="toggleChapterList()">${inputShowAllChapters?"Show fewer chapters":"Show all chapters"}${hiddenCount?` (${hiddenCount} more)`:""}</button>`:""}
       </div>
@@ -1407,16 +1419,25 @@ function renderSelectedPartEntry(partKey){
 function renderChapterEntryRow(partKey,chapter,chapterIdx){
   const attempts=state.chapterAttempts[chKey(partKey,chapter)]||[];
   const latest=attempts.length?attempts[attempts.length-1]:null;
-  const inputId=`ch_${Math.abs(hashCode(partKey+chapter))}`;
-  const rowId=`row_${Math.abs(hashCode(partKey+chapter))}`;
+  const feedbackKey=chKey(partKey,chapter);
+  const selectedFeedback=state.chapterFeedback[feedbackKey]||"";
+  const safeHash=Math.abs(hashCode(partKey+chapter));
+  const inputId=`ch_${safeHash}`;
+  const typeId=`type_${safeHash}`;
+  const rowId=`row_${safeHash}`;
+  const typeOptions=SELF_ASSESSMENT_TYPES.map(type=>`<option value="${xe(type)}" ${latest&&latest.questionType===type?"selected":""}>${xe(type)}</option>`).join("");
+  const reactionButtons=Object.keys(DISCUSSION_REACTIONS).map(key=>`<button class="chapter-discuss-btn ${selectedFeedback===key?"active":""}" type="button" onclick="setChapterFeedback('${encodeURIComponent(partKey)}','${encodeURIComponent(chapter)}','${key}')" title="Mark for discussion: ${key}">${DISCUSSION_REACTIONS[key]}</button>`).join("");
+  const latestType=latest&&latest.questionType?` · ${xe(latest.questionType)}`:"";
+  const feedbackText=selectedFeedback?` · Discussion: ${DISCUSSION_REACTIONS[selectedFeedback]}`:"";
   return `<div class="chapter-entry" id="${rowId}" data-search="${xe((partKey+' '+chapter).toLowerCase())}">
     <div>
       <div class="chapter-entry-title">${xe(chapter)}</div>
-      <div class="chapter-entry-meta">${latest?`Latest: ${latest.earned}/${latest.possible} · ${latest.score}% · ${attempts.length} attempt${attempts.length===1?"":"s"}`:"No attempts yet"}</div>
+      <div class="chapter-entry-meta">${latest?`Latest: ${latest.earned}/${latest.possible} · ${latest.score}%${latestType} · ${attempts.length} attempt${attempts.length===1?"":"s"}${feedbackText}`:`No attempts yet${feedbackText}`}</div>
     </div>
     <input id="${inputId}" type="number" min="0" max="10" step="1" placeholder="0–10">
-    <button onclick="saveChapterAttemptFor('${encodeURIComponent(partKey)}','${encodeURIComponent(chapter)}','${inputId}')">Add /10</button>
-    <button class="delete-mini" onclick="deleteLatestChapterAttemptFor('${encodeURIComponent(partKey)}','${encodeURIComponent(chapter)}')">Undo</button>
+    <select id="${typeId}" class="self-assess-select" aria-label="Self assessment question type">${typeOptions}</select>
+    <div class="chapter-discuss-actions">${reactionButtons}</div>
+    <button onclick="saveChapterAttemptFor('${encodeURIComponent(partKey)}','${encodeURIComponent(chapter)}','${inputId}','${typeId}')">Add /10</button>
   </div>`;
 }
 function toggleChapterList(){
@@ -1446,21 +1467,39 @@ function savePartExamFor(encodedPart,idx){
   state.partExamScores[partKey]=v;
   saveState();setStatus("Section score saved");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
 }
-function saveChapterAttemptFor(encodedPart,encodedChapter,inputId){
+function saveChapterAttemptFor(encodedPart,encodedChapter,inputId,typeId){
   const partKey=decodeURIComponent(encodedPart);
   const chapter=decodeURIComponent(encodedChapter);
   const inp=document.getElementById(inputId);
   const earned=parseInt(inp?inp.value:"",10);
+  const typeEl=document.getElementById(typeId);
+  const questionType=typeEl?typeEl.value:SELF_ASSESSMENT_TYPES[0];
   if(isNaN(earned)||earned<0||earned>QUIZ_MAX){setStatus(`Score must be between 0 and ${QUIZ_MAX}`);return;}
   const key=chKey(partKey,chapter);
   if(!state.chapterAttempts[key])state.chapterAttempts[key]=[];
   const n=state.chapterAttempts[key].length+1;
   const percent=Math.round(earned/QUIZ_MAX*1000)/10;
-  const entry={part:partKey,chapter,label:`Attempt ${n}`,earned,possible:QUIZ_MAX,score:percent,timestamp:new Date().toLocaleString()};
+  const entry={part:partKey,chapter,label:`Attempt ${n}`,earned,possible:QUIZ_MAX,score:percent,questionType,timestamp:new Date().toLocaleString()};
   state.chapterAttempts[key].push(entry);
   state.attemptTimeline.push(entry);
   saveState();setStatus("Chapter attempt saved");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
 }
+function setChapterFeedback(encodedPart,encodedChapter,reaction){
+  const partKey=decodeURIComponent(encodedPart);
+  const chapter=decodeURIComponent(encodedChapter);
+  const key=chKey(partKey,chapter);
+  if(state.chapterFeedback[key]===reaction){
+    delete state.chapterFeedback[key];
+    setStatus("Chapter discussion marker cleared");
+  }else{
+    state.chapterFeedback[key]=reaction;
+    const label=reaction==="up"?"confident":reaction==="neutral"?"needs review":"needs discussion";
+    setStatus(`Chapter marked: ${label}`);
+  }
+  saveState();
+  renderGradeEntryView();
+}
+
 function deleteLatestChapterAttemptFor(encodedPart,encodedChapter){
   const partKey=decodeURIComponent(encodedPart);
   const chapter=decodeURIComponent(encodedChapter);
