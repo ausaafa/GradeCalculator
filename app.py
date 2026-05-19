@@ -3,6 +3,12 @@ import json
 import io
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_file
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Inches, Pt, RGBColor
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production")
@@ -241,22 +247,288 @@ def build_results_text(payload, basic, recommendations):
     return "\n".join(lines)
 
 
+
+def fmt_percent(value):
+    if value is None:
+        return "N/A"
+    return f"{safe_num(value)}%"
+
+
+def set_cell_shading(cell, fill):
+    tc_pr = cell._tc.get_or_add_tcPr()
+    shd = OxmlElement("w:shd")
+    shd.set(qn("w:fill"), fill)
+    tc_pr.append(shd)
+
+
+def set_cell_text(cell, text, bold=False, color=None):
+    cell.text = ""
+    paragraph = cell.paragraphs[0]
+    run = paragraph.add_run(str(text))
+    run.bold = bold
+    if color:
+        run.font.color.rgb = RGBColor.from_string(color)
+    cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
+
+def style_table_header(row):
+    for cell in row.cells:
+        set_cell_shading(cell, "111827")
+        for paragraph in cell.paragraphs:
+            for run in paragraph.runs:
+                run.font.bold = True
+                run.font.color.rgb = RGBColor(255, 255, 255)
+
+
+def add_table(document, headers, rows):
+    table = document.add_table(rows=1, cols=len(headers))
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
+    table.style = "Table Grid"
+    header_cells = table.rows[0].cells
+    for i, header in enumerate(headers):
+        set_cell_text(header_cells[i], header, bold=True)
+    style_table_header(table.rows[0])
+    for row in rows:
+        cells = table.add_row().cells
+        for i, value in enumerate(row):
+            set_cell_text(cells[i], value)
+    return table
+
+
+def latest_chapter_rows(payload):
+    chapter_attempts = payload.get("chapterAttempts", {}) or {}
+    rows = []
+    for key, attempts in chapter_attempts.items():
+        if not attempts:
+            continue
+        latest = attempts[-1]
+        part, chapter = key.split("|||", 1) if "|||" in key else (latest.get("part", ""), latest.get("chapter", key))
+        rows.append({
+            "part": part,
+            "chapter": chapter,
+            "earned": latest.get("earned"),
+            "possible": latest.get("possible"),
+            "score": safe_num(latest.get("score")),
+            "quick_source": latest.get("quickSource"),
+            "timestamp": latest.get("timestamp", ""),
+        })
+    return rows
+
+
+def analyze_results(payload, basic):
+    sections = basic.get("sections", [])
+    scored = [s for s in sections if s.get("score") is not None]
+    strengths = sorted([s for s in scored if safe_num(s.get("score")) >= 70], key=lambda x: x["score"], reverse=True)
+    weaknesses = sorted([s for s in scored if safe_num(s.get("score")) < 70], key=lambda x: x["score"])
+    missing = [s for s in sections if s.get("score") is None]
+
+    timeline = payload.get("attemptTimeline", []) or []
+    trend_scores = [safe_num(item.get("score")) for item in timeline if item.get("score") is not None]
+    trend = "Not enough chapter attempts to calculate a trend yet."
+    if len(trend_scores) >= 2:
+        delta = round(trend_scores[-1] - trend_scores[0], 1)
+        if delta > 5:
+            direction = "improving"
+        elif delta < -5:
+            direction = "declining"
+        else:
+            direction = "stable"
+        trend = f"The chapter attempt trend is {direction}. First attempt: {trend_scores[0]}%, latest attempt: {trend_scores[-1]}%, change: {delta:+.1f}%."
+
+    chapter_rows = latest_chapter_rows(payload)
+    weak_chapters = sorted([r for r in chapter_rows if r["score"] < 70], key=lambda x: x["score"])[:8]
+    strong_chapters = sorted([r for r in chapter_rows if r["score"] >= 70], key=lambda x: x["score"], reverse=True)[:8]
+
+    return {
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "missing": missing,
+        "trend": trend,
+        "weak_chapters": weak_chapters,
+        "strong_chapters": strong_chapters,
+    }
+
+
+def make_results_charts(payload, basic):
+    """Return chart image buffers. If matplotlib is unavailable, report still generates."""
+    charts = {}
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except Exception:
+        return charts
+
+    sections = basic.get("sections", [])
+    labels = [s["part"].split(":")[0][:18] for s in sections]
+    scores = [safe_num(s.get("score")) if s.get("score") is not None else 0 for s in sections]
+    weights = [safe_num(s.get("weight")) for s in sections]
+
+    if sections:
+        fig, ax = plt.subplots(figsize=(7.2, 3.2), dpi=150)
+        ax.bar(labels, weights, label="Section weight")
+        ax.bar(labels, [round(weights[i] * scores[i] / 100, 1) for i in range(len(scores))], label="Earned points")
+        ax.set_title("Section Weight vs Earned Grade Points")
+        ax.set_ylabel("Final-grade weight (%)")
+        ax.legend(fontsize=8)
+        ax.tick_params(axis="x", labelrotation=15)
+        fig.tight_layout()
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["sections"] = buf
+
+    timeline = payload.get("attemptTimeline", []) or []
+    trend_scores = [safe_num(item.get("score")) for item in timeline if item.get("score") is not None]
+    if trend_scores:
+        fig, ax = plt.subplots(figsize=(7.2, 3.0), dpi=150)
+        ax.plot(range(1, len(trend_scores) + 1), trend_scores, marker="o", linewidth=2, label="Attempt score")
+        ax.axhline(70, linestyle="--", linewidth=1, label="70% target")
+        ax.set_title("Chapter Attempt Trend")
+        ax.set_xlabel("Attempt order")
+        ax.set_ylabel("Score (%)")
+        ax.set_ylim(0, 100)
+        ax.legend(fontsize=8)
+        fig.tight_layout()
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight")
+        plt.close(fig)
+        buf.seek(0)
+        charts["trend"] = buf
+
+    return charts
+
+
+def build_results_docx(payload, basic, recommendations):
+    course = payload.get("course") or "Selected course"
+    generated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
+    analysis = analyze_results(payload, basic)
+
+    document = Document()
+    section = document.sections[0]
+    section.top_margin = Inches(0.55)
+    section.bottom_margin = Inches(0.55)
+    section.left_margin = Inches(0.65)
+    section.right_margin = Inches(0.65)
+
+    styles = document.styles
+    styles["Normal"].font.name = "Arial"
+    styles["Normal"].font.size = Pt(9.5)
+
+    title = document.add_paragraph()
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = title.add_run("Pharmacy Prep Instructor Results Report")
+    run.bold = True
+    run.font.size = Pt(20)
+    run.font.color.rgb = RGBColor(17, 24, 39)
+
+    subtitle = document.add_paragraph()
+    subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    subtitle.add_run(f"Course: {course}  |  Generated: {generated_at}").font.size = Pt(10)
+
+    document.add_paragraph()
+    document.add_heading("Executive Summary", level=1)
+    summary_rows = [
+        ["Current overall grade", fmt_percent(basic.get("projected_grade"))],
+        ["Weighted grade on completed sections", fmt_percent(basic.get("weighted_grade"))],
+        ["Grade coverage", fmt_percent(basic.get("coverage"))],
+        ["Total attempts", basic.get("total_attempts", 0)],
+        ["Average attempt score", fmt_percent(basic.get("avg_attempt"))],
+        ["Strongest section", basic.get("strongest_section") or "N/A"],
+        ["Weakest section", basic.get("weakest_section") or "N/A"],
+    ]
+    add_table(document, ["Metric", "Result"], summary_rows)
+
+    document.add_paragraph()
+    document.add_heading("Trend Insight", level=1)
+    document.add_paragraph(analysis["trend"])
+
+    charts = make_results_charts(payload, basic)
+    if charts.get("sections"):
+        document.add_picture(charts["sections"], width=Inches(6.8))
+    if charts.get("trend"):
+        document.add_picture(charts["trend"], width=Inches(6.8))
+
+    document.add_heading("Section Breakdown", level=1)
+    section_rows = []
+    for row in basic.get("sections", []):
+        score = fmt_percent(row.get("score")) if row.get("score") is not None else "Not entered"
+        section_rows.append([
+            row.get("part", ""),
+            fmt_percent(row.get("weight")),
+            score,
+            fmt_percent(row.get("contribution")),
+            row.get("chapter_count", 0),
+        ])
+    add_table(document, ["Section", "Weight", "Score", "Contribution", "Chapters"], section_rows)
+
+    document.add_paragraph()
+    document.add_heading("Strengths", level=1)
+    if analysis["strengths"]:
+        for item in analysis["strengths"][:5]:
+            document.add_paragraph(f"{item['part']}: {fmt_percent(item['score'])}. Maintain this area with quick spaced review and missed-question checks.", style="List Bullet")
+    else:
+        document.add_paragraph("No section is above the 70% target yet. Focus on building consistency across the lowest-weight and highest-weight weak areas first.")
+
+    if analysis["strong_chapters"]:
+        document.add_paragraph("Strong chapter signals:")
+        for row in analysis["strong_chapters"]:
+            document.add_paragraph(f"{row['chapter']} — {fmt_percent(row['score'])}", style="List Bullet")
+
+    document.add_heading("Weaknesses and Instructor Focus Areas", level=1)
+    if analysis["weaknesses"]:
+        for item in analysis["weaknesses"][:6]:
+            document.add_paragraph(f"{item['part']}: {fmt_percent(item['score'])}. Prioritize targeted review, extra practice questions, and re-testing.", style="List Bullet")
+    else:
+        document.add_paragraph("No scored section is currently below 70%. Continue monitoring new attempts for dips.")
+
+    if analysis["weak_chapters"]:
+        document.add_paragraph("Weak chapter signals:")
+        weak_rows = [[r["chapter"], r["part"], fmt_percent(r["score"]), r.get("quick_source") or "Manual score"] for r in analysis["weak_chapters"]]
+        add_table(document, ["Chapter", "Section", "Latest Score", "Source"], weak_rows)
+
+    if analysis["missing"]:
+        document.add_heading("Missing Data", level=1)
+        for item in analysis["missing"]:
+            document.add_paragraph(f"{item['part']}: no part score or chapter aggregate yet. Add data before making a final readiness decision.", style="List Bullet")
+
+    document.add_heading("Instructor Summary and Next Steps", level=1)
+    clean_recommendations = recommendations or build_local_recommendations(basic)
+    for line in str(clean_recommendations).splitlines():
+        clean = line.strip().lstrip("- ").strip()
+        if clean:
+            document.add_paragraph(clean, style="List Bullet")
+
+    document.add_paragraph()
+    footer = document.add_paragraph()
+    footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = footer.add_run("Generated by PharmacyPrep Exam Assessment Evaluator")
+    run.italic = True
+    run.font.size = Pt(8)
+    run.font.color.rgb = RGBColor(100, 116, 139)
+
+    buffer = io.BytesIO()
+    document.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
 @app.route("/api/results/download", methods=["POST"])
 def download_results():
     payload = request.get_json(force=True) or {}
     basic = compute_basic_results(payload)
     recommendations = generate_ai_recommendations(payload, basic) or build_local_recommendations(basic)
-    report = build_results_text(payload, basic, recommendations)
+    report = build_results_docx(payload, basic, recommendations)
 
     safe_course = "student-results"
     if payload.get("course"):
         safe_course = "".join(ch.lower() if ch.isalnum() else "-" for ch in payload["course"]).strip("-")[:70]
-    filename = f"{safe_course}-results-summary.txt"
+    filename = f"{safe_course}-pharmacy-prep-results-report.docx"
 
-    buffer = io.BytesIO(report.encode("utf-8"))
     return send_file(
-        buffer,
-        mimetype="text/plain; charset=utf-8",
+        report,
+        mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         as_attachment=True,
         download_name=filename,
     )

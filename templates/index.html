@@ -535,6 +535,7 @@
     .top-action-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
     .download-results-btn{
       height:50px!important;
+      min-width:178px!important;
       padding:0 20px!important;
       border-radius:8px!important;
       border:1px solid #0f172a!important;
@@ -546,6 +547,12 @@
       box-shadow:0 10px 22px rgba(15,23,42,.18)!important;
       text-transform:uppercase;
       letter-spacing:.02em;
+      display:inline-flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      text-align:center!important;
+      line-height:1!important;
+      white-space:nowrap!important;
     }
     .download-results-btn:hover{background:#1f2937!important;transform:translateY(-1px)}
     .download-results-btn:disabled{opacity:.65;cursor:not-allowed;transform:none!important}
@@ -690,8 +697,8 @@
         <div class="top-pill" id="topPillLeft">Select a course</div>
       </div>
       <div class="top-action-row">
-        <button class="top-pill top-results-btn" id="weightingPill" type="button">My Results</button>
         <button class="download-results-btn" id="downloadResultsBtn" type="button" style="display:none">Download Results</button>
+        <button class="top-pill top-results-btn" id="weightingPill" type="button">My Results</button>
       </div>
     </div>
 
@@ -1036,7 +1043,7 @@ downloadResultsBtn.addEventListener("click", async()=>{
     const a = document.createElement("a");
     const safeCourse = state.selectedCourse.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,70) || "student";
     a.href = url;
-    a.download = `${safeCourse}-results-summary.txt`;
+    a.download = `${safeCourse}-pharmacy-prep-results-report.docx`;
     document.body.appendChild(a);
     a.click();
     a.remove();
