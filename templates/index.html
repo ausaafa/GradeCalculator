@@ -532,6 +532,23 @@
       letter-spacing:.02em;
     }
     .top-results-btn:hover{background:#15803d!important;transform:translateY(-1px)}
+    .top-action-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .download-results-btn{
+      height:50px!important;
+      padding:0 20px!important;
+      border-radius:8px!important;
+      border:1px solid #0f172a!important;
+      background:#0f172a!important;
+      color:#fff!important;
+      font-size:.94rem!important;
+      font-weight:900!important;
+      cursor:pointer!important;
+      box-shadow:0 10px 22px rgba(15,23,42,.18)!important;
+      text-transform:uppercase;
+      letter-spacing:.02em;
+    }
+    .download-results-btn:hover{background:#1f2937!important;transform:translateY(-1px)}
+    .download-results-btn:disabled{opacity:.65;cursor:not-allowed;transform:none!important}
     .emoji-score-hint{color:#64748b;font-size:.78rem;font-weight:700;margin-top:3px;line-height:1.35}
     .chapter-entry{grid-template-columns:minmax(220px,1fr) 88px 156px 112px!important}
 
@@ -672,7 +689,10 @@
         <button class="top-back-btn" id="backBtn" style="display:none">← Back</button>
         <div class="top-pill" id="topPillLeft">Select a course</div>
       </div>
-      <button class="top-pill top-results-btn" id="weightingPill" type="button">My Results</button>
+      <div class="top-action-row">
+        <button class="top-pill top-results-btn" id="weightingPill" type="button">My Results</button>
+        <button class="download-results-btn" id="downloadResultsBtn" type="button" style="display:none">Download Results</button>
+      </div>
     </div>
 
     <div class="main-scroll">
@@ -890,6 +910,7 @@ const statusEl=document.getElementById("status");
 const backBtn=document.getElementById("backBtn");
 const topPill=document.getElementById("topPillLeft");
 const weightingPill=document.getElementById("weightingPill");
+const downloadResultsBtn=document.getElementById("downloadResultsBtn");
 const partLabel=document.getElementById("partLabel");
 
 // Populate course dropdown
@@ -998,6 +1019,39 @@ document.getElementById("inputViewResultsBtn").addEventListener("click",()=>{
   if(!state.selectedCourse){setStatus("Select a course first");return;}
   pushView("resultsView");renderResultsView();setStatus("Results loaded");
 });
+downloadResultsBtn.addEventListener("click", async()=>{
+  if(!state.selectedCourse){setStatus("Select a course first");return;}
+  try{
+    downloadResultsBtn.disabled = true;
+    downloadResultsBtn.textContent = "Preparing...";
+    setStatus("Preparing downloadable results");
+    const response = await fetch("/api/results/download",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(buildResultsPayload())
+    });
+    if(!response.ok) throw new Error(`Download failed (${response.status})`);
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const safeCourse = state.selectedCourse.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,70) || "student";
+    a.href = url;
+    a.download = `${safeCourse}-results-summary.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setStatus("Results downloaded");
+  }catch(err){
+    console.error(err);
+    setStatus("Could not download results");
+    alert("Could not download results. Check the server console for details.");
+  }finally{
+    downloadResultsBtn.disabled = false;
+    downloadResultsBtn.textContent = "Download Results";
+  }
+});
+
 document.getElementById("resetBtn").addEventListener("click",()=>{
   state.selectedCourse = "";
   state.selectedPart = "";
@@ -1113,6 +1167,9 @@ function pushView(id){
 function showView(id){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+  if(downloadResultsBtn){
+    downloadResultsBtn.style.display = (id === "resultsView" && state.selectedCourse) ? "inline-flex" : "none";
+  }
 }
 function setStatus(m){statusEl.innerHTML=`<span>●</span>&nbsp;${m}`}
 function trunc(s,n){return s.length>n?s.slice(0,n)+"…":s}
@@ -1428,9 +1485,10 @@ function renderSelectedPartEntry(partKey){
       </div>
       <div>
         <div class="chapter-section-head">
-          <div><strong>Add chapter score</strong><br><span>Choose a self-assessment type, enter the score, then mark how confident you feel for discussion.</span></div>
+          <div><strong>Add chapter score</strong><br><span>Enter the score, or use the emoji quick-score buttons for a fast chapter result.</span></div>
           <span>${pr.done}/${pr.total} completed</span>
         </div>
+        <div class="self-type-note"><strong>* Emoji quick scores:</strong> 👍 above 70% · 😐 50–60% · 👎 below 50%</div>
         <div class="chapter-search"><input type="text" placeholder="Filter visible chapters..." oninput="filterVisibleChapterRows(this.value)"></div>
         <div class="chapter-entry-list">${chapterRows}</div>
         ${part.chapters.length>6?`<button class="show-more-btn" onclick="toggleChapterList()">${inputShowAllChapters?"Show fewer chapters":"Show all chapters"}${hiddenCount?` (${hiddenCount} more)`:""}</button>`:""}
@@ -1456,7 +1514,6 @@ function renderChapterEntryRow(partKey,chapter,chapterIdx){
     <div>
       <div class="chapter-entry-title">${xe(chapter)}</div>
       <div class="chapter-entry-meta">${latest?`Latest: ${latest.earned}/${latest.possible} · ${latest.score}%${latestType} · ${attempts.length} attempt${attempts.length===1?"":"s"}${feedbackText}`:`No attempts yet${feedbackText}`}</div>
-      <div class="emoji-score-hint">👍 above 70% · 😐 50–60% · 👎 below 50%</div>
     </div>
     <input id="${inputId}" type="number" min="0" max="10" step="1" placeholder="0–10">
     <div class="chapter-discuss-actions">${reactionButtons}</div>
@@ -1544,6 +1601,27 @@ function hashCode(str){
   let h=0;
   for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}
   return h;
+}
+
+function buildResultsPayload(){
+  const course = currentCourse();
+  const parts = currentParts();
+  const courseParts = {};
+  Object.keys(parts).forEach(partKey=>{
+    courseParts[partKey] = {
+      weight: parts[partKey].weight,
+      chapter_count: parts[partKey].chapters.length
+    };
+  });
+  return {
+    course: state.selectedCourse,
+    generatedAt: new Date().toISOString(),
+    courseParts,
+    partScores: state.partExamScores,
+    chapterAttempts: state.chapterAttempts,
+    attemptTimeline: state.attemptTimeline,
+    chapterFeedback: state.chapterFeedback
+  };
 }
 
 // ── RESULTS ──
@@ -1745,6 +1823,7 @@ if(state.selectedCourse){
   topPill.textContent=state.selectedCourse;
 }
 renderDefaultBarChart();
+if(downloadResultsBtn){downloadResultsBtn.style.display="none";}
 setStatus("Saved progress loaded");
 </script>
 </body>
