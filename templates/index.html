@@ -422,7 +422,38 @@
     .chapter-panel{display:none;border-top:1px solid rgba(15,23,42,.08);padding-top:14px}
     .chapter-panel.open{display:block;animation:fadeIn .16s ease}
     .chapter-search{margin-bottom:12px}
-    .chapter-search input{height:48px;border-radius:6px;font-size:.92rem;font-weight:600}
+     .chapter-search input{
+      width:100%;
+      height:48px;
+      border-radius:6px;
+      border:1px solid rgba(15,23,42,.14);
+      background:#fff;
+      color:#111827;
+      padding:0 14px;
+      font-size:.92rem;
+      font-weight:600;
+      outline:none;
+      font-family:'Inter',sans-serif;
+      box-shadow:none;
+      appearance:none;
+    }
+    .chapter-search input:focus{border-color:#111827;box-shadow:0 0 0 3px rgba(15,23,42,.06)}
+    .entry-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .entry-mode-tabs.single-tab{grid-template-columns:1fr}
+    .entry-mode-btn{height:50px;border-radius:8px;border:1px solid rgba(15,23,42,.16);background:#fff;color:#111827;font-size:.94rem;font-weight:900;cursor:pointer;font-family:'Inter',sans-serif;text-transform:uppercase;letter-spacing:.02em;transition:.16s ease}
+    .entry-mode-btn:hover{background:#f8fafc;border-color:#111827;transform:translateY(-1px)}
+    .entry-mode-btn.active{background:#111827;color:#fff;border-color:#111827;box-shadow:0 8px 18px rgba(15,23,42,.12)}
+    .mock-exam-grid{display:grid;gap:14px}
+    .mock-exam-card{border:1px solid rgba(15,23,42,.10);border-radius:12px;background:#fbfcfd;padding:16px}
+    .mock-exam-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .mock-exam-head strong{display:block;font-size:.98rem;font-weight:850;line-height:1.35;color:#111827}
+    .mock-exam-head span{display:block;margin-top:4px;color:#64748b;font-size:.82rem;font-weight:700;line-height:1.4}
+    .mock-exam-pill{padding:8px 10px;border-radius:6px;background:#111827;color:#fff;font-size:.78rem;font-weight:900;white-space:nowrap}
+    .mock-score-row{display:grid;grid-template-columns:1fr 150px;gap:10px;align-items:end}
+    .mock-score-row input{height:48px;border-radius:8px;font-size:.95rem;font-weight:800}
+    .mock-score-row button{height:48px;border-radius:8px;border:1px solid #111827;background:#111827;color:#fff;font-weight:900;cursor:pointer;font-family:'Inter',sans-serif}
+    .mock-score-row button:hover{background:#0f172a;transform:translateY(-1px)}
+    .mock-empty-note{padding:14px 16px;border-radius:10px;background:#f8fafc;border:1px solid rgba(15,23,42,.08);color:#64748b;font-size:.9rem;font-weight:700;line-height:1.5}
     .chapter-entry-list{display:grid;gap:10px;max-height:520px;overflow:auto;padding-right:4px}
     .chapter-entry{border:1px solid rgba(15,23,42,.08);border-radius:10px;background:#fbfcfd;padding:12px;display:grid;grid-template-columns:minmax(220px,1fr) 120px 120px 118px;gap:10px;align-items:center}
     .chapter-entry-title{font-size:.88rem;font-weight:750;line-height:1.35;color:#111827}
@@ -559,7 +590,7 @@
     .emoji-score-hint{color:#64748b;font-size:.78rem;font-weight:700;margin-top:3px;line-height:1.35}
     .chapter-entry{grid-template-columns:minmax(220px,1fr) 88px 156px 112px!important}
 
-    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row{grid-template-columns:1fr!important}.input-head{flex-direction:column}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
+    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row,.mock-score-row{grid-template-columns:1fr!important}.input-head{flex-direction:column}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
 
     @media(max-width:1200px){
       body{overflow:auto}
@@ -876,10 +907,14 @@ const COURSES = {
 const QUIZ_MAX = 10; // All Test Yourself quizzes are out of 10
 const SELF_ASSESSMENT_TYPES = ["Recall","Problem Solving","Critical Thinking","Math Calculations","Regulations & Ethics"];
 const DISCUSSION_REACTIONS = {up:"👍", neutral:"😐", down:"👎"};
+const ADDITIONAL_MOCK_PART_KEY = "__ADDITIONAL_MOCK_EXAMS__";
+const ADDITIONAL_MOCK_PART_LABEL = "Additional mock exams";
+const ADDITIONAL_MOCK_EXAMS = ["EE Calculation MOCK Test JUNE 2026 CBT"];
 
-const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},chapterAttempts:{},attemptTimeline:[],chapterFeedback:{}};
+const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},additionalMockScores:{},chapterAttempts:{},attemptTimeline:[],chapterFeedback:{}};
 let inputSelectedPart="";
 let inputShowAllChapters=false;
+let inputEntryMode="chapters";
 const charts={};
 const viewStack=["defaultView"];
 const STORAGE_KEY="pharmacyprep-v2-state";
@@ -890,7 +925,8 @@ function saveState(){
     partExamScores:state.partExamScores,
     chapterAttempts:state.chapterAttempts,
     attemptTimeline:state.attemptTimeline,
-    chapterFeedback:state.chapterFeedback
+    chapterFeedback:state.chapterFeedback,
+    additionalMockScores:state.additionalMockScores
   }));
 }
 function loadState(){
@@ -903,6 +939,7 @@ function loadState(){
     state.chapterAttempts = s.chapterAttempts || {};
     state.attemptTimeline = s.attemptTimeline || [];
     state.chapterFeedback = s.chapterFeedback || {};
+    state.additionalMockScores = s.additionalMockScores || {};
   }catch(e){}
 }
 
@@ -944,6 +981,7 @@ ddCourse.addEventListener("change",()=>{
   state.selectedChapter = "";
   inputSelectedPart = "";
   inputShowAllChapters = false;
+  inputEntryMode = "chapters";
 
   if(!state.selectedCourse){
     ddPart.innerHTML = '<option value="" selected>Select Part</option>';
@@ -1433,10 +1471,10 @@ function renderGradeEntryView(){
   const course=currentCourse();
   const parts=currentParts();
   const pKeys=Object.keys(parts);
-  if(!inputSelectedPart || !parts[inputSelectedPart]) inputSelectedPart=pKeys[0]||"";
+  if(inputSelectedPart===ADDITIONAL_MOCK_PART_KEY && state.selectedCourse!=="Evaluating Exam") inputSelectedPart="";
+  if(!inputSelectedPart || (!parts[inputSelectedPart] && inputSelectedPart!==ADDITIONAL_MOCK_PART_KEY)) inputSelectedPart=pKeys[0]||"";
   const totalChapters=pKeys.reduce((sum,p)=>sum+parts[p].chapters.length,0);
   const completedChapters=pKeys.reduce((sum,p)=>sum+partProgress(p).done,0);
-  const weights=pKeys.map(p=>parts[p].weight).join(" / ");
   document.getElementById("inputCourseTitle").textContent=state.selectedCourse;
   document.getElementById("courseSummaryGrid").innerHTML=`
     <div class="summary-tile"><strong>${pKeys.length}</strong><span>${xe(course.partLabel)} sections</span></div>
@@ -1444,13 +1482,14 @@ function renderGradeEntryView(){
     <div class="summary-tile"><strong>${completedChapters}/${totalChapters}</strong><span>Chapters scored</span></div>`;
   weightingPill.textContent= "My Results";
   topPill.textContent=state.selectedCourse;
-  const options=pKeys.map(p=>`<option value="${xe(p)}" ${p===inputSelectedPart?"selected":""}>${xe(p)} (${parts[p].weight}%)</option>`).join("");
+  const partOptions=pKeys.map(p=>`<option value="${xe(p)}" ${p===inputSelectedPart?"selected":""}>${xe(p)} (${parts[p].weight}%)</option>`).join("") +
+    (state.selectedCourse === "Evaluating Exam" ? `<option value="${ADDITIONAL_MOCK_PART_KEY}" ${inputSelectedPart===ADDITIONAL_MOCK_PART_KEY?"selected":""}>${ADDITIONAL_MOCK_PART_LABEL}</option>` : "");
   document.getElementById("gradeEntryPanel").innerHTML=`
     <div class="part-picker-card">
       <div class="part-picker-row">
         <div>
           <label class="subtle-label" for="inputPartSelect">Choose ${xe(course.partLabel.toLowerCase())}</label>
-          <select id="inputPartSelect" onchange="selectInputPart(this.value)">${options}</select>
+          <select id="inputPartSelect" onchange="selectInputPart(this.value)">${partOptions}</select>
         </div>
         <button class="primary-btn" onclick="renderGradeEntryView()">Refresh</button>
       </div>
@@ -1459,21 +1498,54 @@ function renderGradeEntryView(){
 }
 function selectInputPart(partKey){
   inputSelectedPart=partKey;
-  state.selectedPart=partKey;
+  state.selectedPart=partKey===ADDITIONAL_MOCK_PART_KEY?"":partKey;
   inputShowAllChapters=false;
+  inputEntryMode=partKey===ADDITIONAL_MOCK_PART_KEY?"mocks":"chapters";
   renderGradeEntryView();
-  setStatus(`${currentCourse().partLabel} selected`);
+  if(partKey!==ADDITIONAL_MOCK_PART_KEY) setStatus(`${currentCourse().partLabel} selected`);
+}
+function setInputEntryMode(mode){
+  inputEntryMode=mode==="mocks"?"mocks":"chapters";
+  renderGradeEntryView();
+}
+function getMockExamName(partKey){
+  // Evaluating Exam mock exams use the exact same names as their parts.
+  return partKey;
 }
 function renderSelectedPartEntry(partKey){
+  const isAdditionalMocks = partKey === ADDITIONAL_MOCK_PART_KEY;
+  const isEvaluatingExam = state.selectedCourse === "Evaluating Exam";
+
+  if(isAdditionalMocks){
+    const tabs = `<div class="entry-mode-tabs single-tab">
+      <button class="entry-mode-btn active" type="button">Mock Exams</button>
+    </div>`;
+    return `<div class="selected-part-panel">
+      <div class="entry-part-head">
+        <div>
+          <h3>${ADDITIONAL_MOCK_PART_LABEL}</h3>
+          <p>No chapters in this section. Use it to record extra mock exams.</p>
+        </div>
+        <div class="entry-weight">Additional</div>
+      </div>
+      <div class="entry-part-body">
+        ${tabs}
+        ${renderAdditionalMockExamEntry()}
+      </div>
+    </div>`;
+  }
+
   const part=currentParts()[partKey];
   const pr=partProgress(partKey);
-  const pKeys=Object.keys(currentParts());
-  const idx=Math.max(0,pKeys.indexOf(partKey));
-  const partScore=state.partExamScores[partKey]??"";
-  const visibleCount=inputShowAllChapters?part.chapters.length:Math.min(6,part.chapters.length);
-  const visibleChapters=part.chapters.slice(0,visibleCount);
-  const chapterRows=visibleChapters.map((ch,i)=>renderChapterEntryRow(partKey,ch,i)).join("");
-  const hiddenCount=Math.max(0,part.chapters.length-visibleCount);
+  const mode=(isEvaluatingExam && inputEntryMode==="mocks")?"mocks":"chapters";
+  const tabs = isEvaluatingExam
+    ? `<div class="entry-mode-tabs">
+        <button class="entry-mode-btn ${mode==="chapters"?"active":""}" type="button" onclick="setInputEntryMode('chapters')">Chapters</button>
+        <button class="entry-mode-btn ${mode==="mocks"?"active":""}" type="button" onclick="setInputEntryMode('mocks')">Mock Exams</button>
+      </div>`
+    : `<div class="entry-mode-tabs single-tab">
+        <button class="entry-mode-btn active" type="button" onclick="setInputEntryMode('chapters')">Chapters</button>
+      </div>`;
   return `<div class="selected-part-panel">
     <div class="entry-part-head">
       <div>
@@ -1483,26 +1555,68 @@ function renderSelectedPartEntry(partKey){
       <div class="entry-weight">${part.weight}% weight</div>
     </div>
     <div class="entry-part-body">
-      <div class="part-score-row">
+      ${tabs}
+      ${mode==="mocks"?renderMockExamEntry(partKey):renderChaptersEntry(partKey)}
+    </div>
+  </div>`;
+}
+function renderChaptersEntry(partKey){
+  const part=currentParts()[partKey];
+  const pr=partProgress(partKey);
+  const visibleCount=inputShowAllChapters?part.chapters.length:Math.min(6,part.chapters.length);
+  const visibleChapters=part.chapters.slice(0,visibleCount);
+  const chapterRows=visibleChapters.map((ch,i)=>renderChapterEntryRow(partKey,ch,i)).join("");
+  const hiddenCount=Math.max(0,part.chapters.length-visibleCount);
+  return `<div>
+    <div class="chapter-section-head">
+      <div><strong>Add chapter score</strong><br><span>Enter the score, or use the emoji quick-score buttons for a fast chapter result.</span></div>
+      <span>${pr.done}/${pr.total} completed</span>
+    </div>
+    <div class="self-type-note"><strong>* Emoji quick scores:</strong> 👍 above 70% · 😐 50–60% · 👎 below 50%</div>
+    <div class="chapter-search"><input type="text" placeholder="Filter visible chapters..." oninput="filterVisibleChapterRows(this.value)"></div>
+    <div class="chapter-entry-list">${chapterRows}</div>
+    ${part.chapters.length>6?`<button class="show-more-btn" onclick="toggleChapterList()">${inputShowAllChapters?"Show fewer chapters":"Show all chapters"}${hiddenCount?` (${hiddenCount} more)`:""}</button>`:""}
+  </div>`;
+}
+function renderMockExamEntry(partKey){
+  const currentPartScore=state.partExamScores[partKey]??"";
+  return `<div class="mock-exam-grid">
+    <div class="mock-exam-card">
+      <div class="mock-exam-head">
         <div>
-          <label class="subtle-label">Main ${xe(currentCourse().partLabel.toLowerCase())} exam score</label>
-          <input id="partScore_${idx}" type="number" min="0" max="100" step="0.1" placeholder="Enter score out of 100" value="${partScore}">
+          <strong>${xe(getMockExamName(partKey))}</strong>
+          <span>Mock exam score for this selected part. This score is used in My Results.</span>
         </div>
-        <button class="primary-btn" onclick="savePartExamFor('${encodeURIComponent(partKey)}',${idx})">Save Score</button>
+        <div class="mock-exam-pill">${currentParts()[partKey].weight}% weight</div>
       </div>
-      <div>
-        <div class="chapter-section-head">
-          <div><strong>Add chapter score</strong><br><span>Enter the score, or use the emoji quick-score buttons for a fast chapter result.</span></div>
-          <span>${pr.done}/${pr.total} completed</span>
-        </div>
-        <div class="self-type-note"><strong>* Emoji quick scores:</strong> 👍 above 70% · 😐 50–60% · 👎 below 50%</div>
-        <div class="chapter-search"><input type="text" placeholder="Filter visible chapters..." oninput="filterVisibleChapterRows(this.value)"></div>
-        <div class="chapter-entry-list">${chapterRows}</div>
-        ${part.chapters.length>6?`<button class="show-more-btn" onclick="toggleChapterList()">${inputShowAllChapters?"Show fewer chapters":"Show all chapters"}${hiddenCount?` (${hiddenCount} more)`:""}</button>`:""}
+      <div class="mock-score-row">
+        <input id="mockScore_primary" type="number" min="0" max="100" step="0.1" placeholder="Enter mock exam score out of 100" value="${currentPartScore}">
+        <button type="button" onclick="saveMockExamFor('${encodeURIComponent(partKey)}','mockScore_primary')">Save Score</button>
       </div>
     </div>
   </div>`;
 }
+function renderAdditionalMockExamEntry(){
+  const cards = ADDITIONAL_MOCK_EXAMS.map((mockName,idx)=>{
+    const inputId=`additionalMockScore_${idx}`;
+    const currentScore=state.additionalMockScores[mockName]??"";
+    return `<div class="mock-exam-card">
+      <div class="mock-exam-head">
+        <div>
+          <strong>${xe(mockName)}</strong>
+          <span>Additional mock exam score. This does not require chapters.</span>
+        </div>
+        <div class="mock-exam-pill">Additional</div>
+      </div>
+      <div class="mock-score-row">
+        <input id="${inputId}" type="number" min="0" max="100" step="0.1" placeholder="Enter mock exam score out of 100" value="${currentScore}">
+        <button type="button" onclick="saveAdditionalMockExamFor('${encodeURIComponent(mockName)}','${inputId}')">Save Score</button>
+      </div>
+    </div>`;
+  }).join("");
+  return `<div class="mock-exam-grid">${cards}</div>`;
+}
+
 function renderChapterEntryRow(partKey,chapter,chapterIdx){
   const attempts=state.chapterAttempts[chKey(partKey,chapter)]||[];
   const latest=attempts.length?attempts[attempts.length-1]:null;
@@ -1554,6 +1668,38 @@ function savePartExamFor(encodedPart,idx){
   state.partExamScores[partKey]=v;
   saveState();setStatus("Section score saved");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
 }
+function saveMockExamFor(encodedPart,inputId){
+  const partKey=decodeURIComponent(encodedPart);
+  const inp=document.getElementById(inputId);
+  const raw=inp?inp.value:"";
+  if(raw===""){
+    delete state.partExamScores[partKey];
+    saveState();setStatus("Mock exam score cleared");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();return;
+  }
+  const v=Math.max(0,Math.min(100,Math.round(parseFloat(raw)*10)/10));
+  if(isNaN(v)){setStatus("Enter a score from 0 to 100");return;}
+  state.partExamScores[partKey]=v;
+  saveState();setStatus("Mock exam score saved");renderGradeEntryView();destroyChart("defaultBarChart");renderDefaultBarChart();
+}
+function saveAdditionalMockExamFor(encodedMockName,inputId){
+  const mockName=decodeURIComponent(encodedMockName);
+  const inp=document.getElementById(inputId);
+  const raw=inp?inp.value:"";
+  if(raw===""){
+    delete state.additionalMockScores[mockName];
+    saveState();
+    setStatus("Additional mock exam score cleared");
+    renderGradeEntryView();
+    return;
+  }
+  const v=Math.max(0,Math.min(100,Math.round(parseFloat(raw)*10)/10));
+  if(isNaN(v)){setStatus("Enter a score from 0 to 100");return;}
+  state.additionalMockScores[mockName]=v;
+  saveState();
+  setStatus("Additional mock exam score saved");
+  renderGradeEntryView();
+}
+
 function saveChapterAttemptFor(encodedPart,encodedChapter,inputId){
   const partKey=decodeURIComponent(encodedPart);
   const chapter=decodeURIComponent(encodedChapter);
@@ -1627,7 +1773,8 @@ function buildResultsPayload(){
     partScores: state.partExamScores,
     chapterAttempts: state.chapterAttempts,
     attemptTimeline: state.attemptTimeline,
-    chapterFeedback: state.chapterFeedback
+    chapterFeedback: state.chapterFeedback,
+    additionalMockScores: state.additionalMockScores
   };
 }
 
