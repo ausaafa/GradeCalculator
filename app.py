@@ -1,6 +1,8 @@
 import os
 import json
 import io
+import re
+import tempfile
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_file
 from docx import Document
@@ -12,6 +14,37 @@ from docx.shared import Inches, Pt, RGBColor
 
 app = Flask(__name__, template_folder="templates")
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production")
+
+PROGRESS_DIR = os.environ.get("PROGRESS_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "student_progress"))
+os.makedirs(PROGRESS_DIR, exist_ok=True)
+
+
+def safe_progress_id(value):
+    raw = str(value or "").strip()
+    if not raw:
+        return "default"
+    cleaned = re.sub(r"[^a-zA-Z0-9_-]", "", raw)[:80]
+    return cleaned or "default"
+
+
+def progress_path(progress_id):
+    return os.path.join(PROGRESS_DIR, f"{safe_progress_id(progress_id)}.json")
+
+
+def public_progress_payload(payload):
+    allowed_keys = {
+        "clientId",
+        "selectedCourse",
+        "selectedPart",
+        "selectedChapter",
+        "partExamScores",
+        "additionalMockScores",
+        "chapterAttempts",
+        "attemptTimeline",
+        "chapterFeedback",
+        "updatedAt",
+    }
+    return {key: payload.get(key) for key in allowed_keys if key in payload}
 
 DEFAULT_EXAM = {
     "Part 1: Pharmaceutical Sciences": {"weight": 25},
@@ -53,6 +86,39 @@ def home():
 @app.route("/health")
 def health():
     return jsonify({"ok": True})
+
+
+@app.route("/api/progress/load", methods=["GET"])
+def load_progress():
+    progress_id = safe_progress_id(request.args.get("clientId") or request.args.get("id"))
+    path = progress_path(progress_id)
+    if not os.path.exists(path):
+        return jsonify({"ok": True, "found": False, "progress": None})
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            progress = json.load(f)
+        return jsonify({"ok": True, "found": True, "progress": progress})
+    except Exception:
+        return jsonify({"ok": False, "error": "Could not load saved progress."}), 500
+
+
+@app.route("/api/progress/save", methods=["POST"])
+def save_progress():
+    payload = request.get_json(force=True) or {}
+    progress_id = safe_progress_id(payload.get("clientId") or request.args.get("clientId") or request.args.get("id"))
+    progress = public_progress_payload(payload)
+    progress["clientId"] = progress_id
+    progress["serverSavedAt"] = datetime.now().isoformat(timespec="seconds")
+
+    target_path = progress_path(progress_id)
+    try:
+        fd, tmp_path = tempfile.mkstemp(prefix=f"{progress_id}.", suffix=".tmp", dir=PROGRESS_DIR)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(progress, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, target_path)
+        return jsonify({"ok": True, "saved": True, "clientId": progress_id})
+    except Exception:
+        return jsonify({"ok": False, "error": "Could not save progress."}), 500
 
 
 def compute_basic_results(payload):

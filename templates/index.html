@@ -551,7 +551,7 @@
     .top-results-btn{
       height:50px!important;
       padding:0 22px!important;
-      border-radius:8px!important;
+      border-radius:4px!important;
       border:1px solid #15803d!important;
       background:#16a34a!important;
       color:#fff!important;
@@ -568,7 +568,7 @@
       height:50px!important;
       min-width:178px!important;
       padding:0 20px!important;
-      border-radius:8px!important;
+      border-radius:4px!important;
       border:1px solid #0f172a!important;
       background:#0f172a!important;
       color:#fff!important;
@@ -590,7 +590,184 @@
     .emoji-score-hint{color:#64748b;font-size:.78rem;font-weight:700;margin-top:3px;line-height:1.35}
     .chapter-entry{grid-template-columns:minmax(220px,1fr) 88px 156px 112px!important}
 
-    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row,.mock-score-row{grid-template-columns:1fr!important}.input-head{flex-direction:column}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
+
+
+    /* ── CLEAN DASHBOARD LAYOUT PATCH: removed sidebar action buttons + default graph ── */
+    .sidebar{
+      padding:26px 22px 22px!important;
+      gap:0;
+    }
+    .brand{
+      padding:6px 2px 0;
+    }
+    .brand h1{
+      font-size:2.05rem!important;
+    }
+    .field{
+      background:#fff;
+      border:1px solid rgba(15,23,42,.08);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 10px 22px rgba(15,23,42,.035);
+      margin-bottom:14px!important;
+    }
+    .field label{
+      margin-bottom:10px!important;
+    }
+    .status-chip{
+      margin-top:2px;
+      min-height:58px!important;
+      border-radius:16px!important;
+      box-shadow:0 10px 22px rgba(15,23,42,.035);
+    }
+    .sidebar-actions{
+      display:none!important;
+    }
+    .sidebar-guide{
+      margin-top:16px;
+      padding:18px;
+      border-radius:18px;
+      background:linear-gradient(180deg,#ffffff,#f8fafc);
+      border:1px solid rgba(15,23,42,.08);
+      box-shadow:0 10px 22px rgba(15,23,42,.035);
+    }
+    .sidebar-guide-title{
+      font-size:.78rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#111827;
+      margin-bottom:10px;
+    }
+    .sidebar-guide p{
+      color:#64748b;
+      font-size:.92rem;
+      line-height:1.55;
+      font-weight:600;
+    }
+    .main-topbar{
+      height:78px!important;
+      padding:16px 28px!important;
+    }
+    .top-pill{
+      border-radius:999px!important;
+      background:#f8fafc!important;
+    }
+    .hero{
+      min-height:calc(100vh - 150px)!important;
+      padding:28px;
+    }
+    .hero-inner{
+      max-width:820px!important;
+      padding:58px 46px;
+      border-radius:32px;
+      background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+      border:1px solid rgba(15,23,42,.08);
+      box-shadow:0 26px 70px rgba(15,23,42,.08);
+    }
+    .hero-mark{
+      width:92px!important;
+      height:92px!important;
+      border-radius:28px!important;
+      background:linear-gradient(135deg,#0f172a,#475569)!important;
+      position:relative;
+    }
+    .hero-mark:after{
+      content:"";
+      position:absolute;
+      inset:20px;
+      border-radius:16px;
+      border:2px solid rgba(255,255,255,.78);
+      border-top-width:8px;
+    }
+    .hero h2{
+      font-size:3rem!important;
+      margin-bottom:14px!important;
+    }
+    .hero p{
+      margin-bottom:0!important;
+      font-size:1.08rem!important;
+    }
+    .input-head{
+      align-items:center!important;
+      padding-bottom:6px;
+      border-bottom:1px solid rgba(15,23,42,.06);
+    }
+    .input-head-badge{
+      padding:11px 14px;
+      border-radius:999px;
+      background:#ecfdf5;
+      color:#166534;
+      border:1px solid #bbf7d0;
+      font-size:.82rem;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      white-space:nowrap;
+    }
+    .part-picker-row{
+      grid-template-columns:1fr!important;
+    }
+
+
+    /* ── FINAL PATCH: persistent green My Results + clear blue/red mode tabs ── */
+    .top-results-btn,
+    .top-results-btn:link,
+    .top-results-btn:visited,
+    .top-results-btn:focus,
+    .top-results-btn:focus-visible,
+    .top-results-btn:active{
+      background:#16a34a!important;
+      color:#fff!important;
+      border-color:#15803d!important;
+      box-shadow:0 10px 22px rgba(22,163,74,.22)!important;
+      border-radius:4px!important;
+      outline:none!important;
+    }
+    .top-results-btn:hover{
+      background:#15803d!important;
+      color:#fff!important;
+      border-color:#166534!important;
+      transform:translateY(-1px)!important;
+    }
+    .entry-mode-btn.chapter-tab{
+      background:#eff6ff!important;
+      color:#1d4ed8!important;
+      border-color:#bfdbfe!important;
+    }
+    .entry-mode-btn.chapter-tab:hover{
+      background:#dbeafe!important;
+      border-color:#2563eb!important;
+      color:#1e40af!important;
+    }
+    .entry-mode-btn.chapter-tab.active{
+      background:#2563eb!important;
+      color:#fff!important;
+      border-color:#2563eb!important;
+      box-shadow:0 8px 18px rgba(37,99,235,.22)!important;
+    }
+    .entry-mode-btn.mock-tab{
+      background:#fef2f2!important;
+      color:#b91c1c!important;
+      border-color:#fecaca!important;
+    }
+    .entry-mode-btn.mock-tab:hover{
+      background:#fee2e2!important;
+      border-color:#dc2626!important;
+      color:#991b1b!important;
+    }
+    .entry-mode-btn.mock-tab.active{
+      background:#dc2626!important;
+      color:#fff!important;
+      border-color:#dc2626!important;
+      box-shadow:0 8px 18px rgba(220,38,38,.22)!important;
+    }
+    .top-results-btn,
+    .download-results-btn{
+      border-radius:4px!important;
+    }
+
+    @media(max-width:1200px){.course-summary-grid,.part-score-row,.chapter-entry,.part-picker-row,.mock-score-row{grid-template-columns:1fr!important}.input-head{flex-direction:column}.input-head-badge{white-space:normal}.readiness-table{min-width:680px}.readiness-card{overflow-x:auto}}
 
     @media(max-width:1200px){
       body{overflow:auto}
@@ -713,11 +890,9 @@
 
     <div class="status-chip" id="status"><span>●</span>&nbsp;Default page loaded</div>
 
-    <div class="sidebar-actions">
-      <button class="side-btn" id="viewResultsBtn" style="display:none">View Results</button>
-      <button class="side-btn outline-btn" id="resetBtn">Reset</button>
-      <button class="side-btn outline-btn" id="syllabusBtn">Syllabus</button>
-      <button class="side-btn outline-btn" id="infoBtn">Info</button>
+    <div class="sidebar-guide">
+      <div class="sidebar-guide-title">Grade workspace</div>
+      <p>Select a course, enter chapter or mock-exam scores, then use the green <strong>My Results</strong> button in the top-right to review your performance.</p>
     </div>
   </aside>
 
@@ -741,12 +916,7 @@
           <div class="hero-inner">
             <div class="hero-mark"></div>
             <h2>Exam Assessment Dashboard</h2>
-            <p>Select a course to open one clean grade-entry workspace. Enter section scores first, then expand chapters only when you want to log quiz attempts. Results stay separate until you click <strong>View Results</strong>.</p>
-            <div class="card" style="margin-top:24px;text-align:left;">
-              <div class="card-title">Grade breakdown</div>
-              <div class="card-sub">One graph showing total section weight beside how much of that section you have completed.</div>
-              <div class="chart-wrap sm"><canvas id="defaultBarChart"></canvas></div>
-            </div>
+            <p>Select a course to open your assessment workspace. Enter chapter, section, or mock-exam scores, then use the green <strong>My Results</strong> button in the top-right to review your progress.</p>
           </div>
         </div>
       </section>
@@ -761,7 +931,7 @@
                 <h2 id="inputCourseTitle">Course grade entry</h2>
                 <p>Enter all section scores on this page. Chapter scoring is optional and stays collapsed until you expand a section.</p>
               </div>
-              <button class="primary-btn" id="inputViewResultsBtn">My Results</button>
+              <div class="input-head-badge">Use My Results when ready</div>
             </div>
             <div class="course-summary-grid" id="courseSummaryGrid"></div>
             <div class="entry-list" id="gradeEntryPanel"></div>
@@ -908,7 +1078,7 @@ const QUIZ_MAX = 10; // All Test Yourself quizzes are out of 10
 const SELF_ASSESSMENT_TYPES = ["Recall","Problem Solving","Critical Thinking","Math Calculations","Regulations & Ethics"];
 const DISCUSSION_REACTIONS = {up:"👍", neutral:"😐", down:"👎"};
 const ADDITIONAL_MOCK_PART_KEY = "__ADDITIONAL_MOCK_EXAMS__";
-const ADDITIONAL_MOCK_PART_LABEL = "Additional mock exams";
+const ADDITIONAL_MOCK_PART_LABEL = "Additional Mock Exams";
 const ADDITIONAL_MOCK_EXAMS = ["EE Calculation MOCK Test JUNE 2026 CBT"];
 
 const state={selectedCourse:"",selectedPart:"",selectedChapter:"",partExamScores:{},additionalMockScores:{},chapterAttempts:{},attemptTimeline:[],chapterFeedback:{}};
@@ -918,29 +1088,134 @@ let inputEntryMode="chapters";
 const charts={};
 const viewStack=["defaultView"];
 const STORAGE_KEY="pharmacyprep-v2-state";
+const CLIENT_ID_KEY="pharmacyprep-v2-client-id";
+let saveTimer=null;
 
-function saveState(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify({
+function getClientId(){
+  let id=localStorage.getItem(CLIENT_ID_KEY);
+  if(!id){
+    id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():`pp-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(CLIENT_ID_KEY,id);
+  }
+  return id;
+}
+
+function buildProgressState(){
+  return {
+    clientId:getClientId(),
     selectedCourse:state.selectedCourse,
+    selectedPart:state.selectedPart,
+    selectedChapter:state.selectedChapter,
     partExamScores:state.partExamScores,
     chapterAttempts:state.chapterAttempts,
     attemptTimeline:state.attemptTimeline,
     chapterFeedback:state.chapterFeedback,
-    additionalMockScores:state.additionalMockScores
-  }));
+    additionalMockScores:state.additionalMockScores,
+    updatedAt:new Date().toISOString()
+  };
 }
-function loadState(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if(!raw) return;
+
+function applyProgressState(saved){
+  if(!saved||typeof saved!=="object")return false;
+  state.selectedCourse = COURSES[saved.selectedCourse] ? saved.selectedCourse : "";
+  state.selectedPart = saved.selectedPart || "";
+  state.selectedChapter = saved.selectedChapter || "";
+  state.partExamScores = saved.partExamScores || {};
+  state.chapterAttempts = saved.chapterAttempts || {};
+  state.attemptTimeline = saved.attemptTimeline || [];
+  state.chapterFeedback = saved.chapterFeedback || {};
+  state.additionalMockScores = saved.additionalMockScores || {};
+  if(saved.clientId)localStorage.setItem(CLIENT_ID_KEY,saved.clientId);
+  return true;
+}
+
+function saveState(){
+  const progress=buildProgressState();
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));
+  scheduleServerSave(progress);
+}
+
+function scheduleServerSave(progress){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>saveStateToServer(progress),350);
+}
+
+async function saveStateToServer(progress){
   try{
-    const s = JSON.parse(raw);
-    state.selectedCourse = "";
-    state.partExamScores = s.partExamScores || {};
-    state.chapterAttempts = s.chapterAttempts || {};
-    state.attemptTimeline = s.attemptTimeline || [];
-    state.chapterFeedback = s.chapterFeedback || {};
-    state.additionalMockScores = s.additionalMockScores || {};
+    await fetch("/api/progress/save",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(progress),
+      keepalive:true
+    });
+  }catch(e){
+    // Local browser storage still keeps the data if the server is unavailable.
+  }
+}
+
+function loadState(){
+  const raw=localStorage.getItem(STORAGE_KEY);
+  if(!raw)return false;
+  try{return applyProgressState(JSON.parse(raw));}
+  catch(e){return false;}
+}
+
+async function loadStateFromServer(){
+  try{
+    const response=await fetch(`/api/progress/load?clientId=${encodeURIComponent(getClientId())}`,{cache:"no-store"});
+    if(!response.ok)return false;
+    const data=await response.json();
+    if(!data.ok||!data.found||!data.progress)return false;
+
+    const localRaw=localStorage.getItem(STORAGE_KEY);
+    const local=localRaw?JSON.parse(localRaw):null;
+    const localTime=local&&local.updatedAt?Date.parse(local.updatedAt):0;
+    const serverTime=data.progress.updatedAt?Date.parse(data.progress.updatedAt):0;
+    if(serverTime>=localTime){
+      applyProgressState(data.progress);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(data.progress));
+      restoreSavedProgressView();
+      setStatus("Saved progress restored");
+      return true;
+    }
   }catch(e){}
+  return false;
+}
+
+function restoreSavedProgressView(){
+  if(state.selectedCourse && COURSES[state.selectedCourse]){
+    ddCourse.value=state.selectedCourse;
+    const course=COURSES[state.selectedCourse];
+    partLabel.textContent=course.partLabel;
+    ddPart.innerHTML=`<option value="" selected>Select ${course.partLabel}</option>`;
+    Object.keys(course.parts).forEach(p=>{
+      const w=course.parts[p].weight;
+      const o=document.createElement("option");o.value=p;o.textContent=`${p} (${w}%)`;ddPart.appendChild(o);
+    });
+    ddPart.disabled=false;
+    ddChapter.innerHTML='<option value="" selected>Select Chapter</option>';
+    ddChapter.disabled=true;
+    weightingPill.textContent="My Results";
+    topPill.textContent=state.selectedCourse;
+    viewStack.length=0;
+    viewStack.push("inputView");
+    showView("inputView");
+    backBtn.style.display="none";
+    renderGradeEntryView();
+  }else{
+    ddCourse.value="";
+    ddPart.innerHTML='<option value="" selected>Select Part</option>';
+    ddPart.disabled=true;
+    ddChapter.innerHTML='<option value="" selected>Select Chapter</option>';
+    ddChapter.disabled=true;
+    partLabel.textContent="Part";
+    weightingPill.textContent="My Results";
+    topPill.textContent="Select a course";
+    viewStack.length=0;
+    viewStack.push("defaultView");
+    showView("defaultView");
+    backBtn.style.display="none";
+  }
 }
 
 function currentCourse(){return COURSES[state.selectedCourse]||null}
@@ -1000,8 +1275,6 @@ ddCourse.addEventListener("change",()=>{
     showView("defaultView");
     backBtn.style.display = "none";
 
-    destroyChart("defaultBarChart");
-    renderDefaultBarChart();
     return;
   }
 
@@ -1052,15 +1325,7 @@ ddChapter.addEventListener("change",()=>{
   pushView("chapterView");renderChapterView();
 });
 
-document.getElementById("viewResultsBtn").addEventListener("click",()=>{
-  if(!state.selectedCourse){setStatus("Select a course first");return;}
-  pushView("resultsView");renderResultsView();setStatus("Results loaded");
-});
 weightingPill.addEventListener("click",()=>{
-  if(!state.selectedCourse){setStatus("Select a course first");return;}
-  pushView("resultsView");renderResultsView();setStatus("Results loaded");
-});
-document.getElementById("inputViewResultsBtn").addEventListener("click",()=>{
   if(!state.selectedCourse){setStatus("Select a course first");return;}
   pushView("resultsView");renderResultsView();setStatus("Results loaded");
 });
@@ -1097,41 +1362,6 @@ downloadResultsBtn.addEventListener("click", async()=>{
   }
 });
 
-document.getElementById("resetBtn").addEventListener("click",()=>{
-  state.selectedCourse = "";
-  state.selectedPart = "";
-  state.selectedChapter = "";
-
-  ddCourse.value = "";
-
-  ddPart.innerHTML = '<option value="" selected>Select Part</option>';
-  ddPart.disabled = true;
-
-  ddChapter.innerHTML = '<option value="" selected>Select Chapter</option>';
-  ddChapter.disabled = true;
-
-  partLabel.textContent = "Part";
-  topPill.textContent = "Select a course";
-  weightingPill.textContent = "My Results";
-  setStatus("Default page loaded");
-
-  viewStack.length = 0;
-  viewStack.push("defaultView");
-  showView("defaultView");
-  backBtn.style.display = "none";
-
-  destroyChart("defaultBarChart");
-  renderDefaultBarChart();
-});
-document.getElementById("infoBtn").addEventListener("click",()=>{
-  document.getElementById("infoModal").classList.add("open");
-});
-document.getElementById("syllabusBtn").addEventListener("click",()=>{
-  const courseName = state.selectedCourse || Object.keys(COURSES)[0];
-  sylCourseSelect.value = courseName;
-  renderSyllabus(courseName);
-  document.getElementById("syllabusModal").classList.add("open");
-});
 
 document.getElementById("infoModalClose").addEventListener("click",()=>{
   document.getElementById("infoModal").classList.remove("open");
@@ -1143,35 +1373,6 @@ document.getElementById("infoModal").addEventListener("click",(e)=>{
   }
 });
 
-// Syllabus button
-document.getElementById("resetBtn").addEventListener("click",()=>{
-  // Reset only selections and view state
-  state.selectedCourse = "";
-  state.selectedPart = "";
-  state.selectedChapter = "";
-
-  // Keep saved grades intact
-  ddCourse.value = "";
-  ddPart.innerHTML = '<option value="" selected>Select Part</option>';
-  ddPart.disabled = true;
-
-  ddChapter.innerHTML = '<option value="" selected>Select Chapter</option>';
-  ddChapter.disabled = true;
-
-  partLabel.textContent = "Part";
-  topPill.textContent = "Select a course";
-  weightingPill.textContent = "My Results";
-  setStatus("Default page loaded");
-
-  // Return to default screen
-  viewStack.length = 0;
-  viewStack.push("defaultView");
-  showView("defaultView");
-  backBtn.style.display = "none";
-
-  destroyChart("defaultBarChart");
-  renderDefaultBarChart();
-});
 document.getElementById("modalClose").addEventListener("click",()=>{
   document.getElementById("syllabusModal").classList.remove("open");
 });
@@ -1193,8 +1394,7 @@ backBtn.addEventListener("click",()=>{
     ddChapter.disabled=true;
     state.selectedPart="";state.selectedChapter="";
     topPill.textContent=state.selectedCourse||"Select a course";
-    destroyChart("defaultBarChart");renderDefaultBarChart();
-  }else if(prev==="partView"){
+    }else if(prev==="partView"){
     state.selectedChapter="";ddChapter.selectedIndex=0;
     topPill.textContent=state.selectedPart.split(":")[0].trim();
     renderPartView();
@@ -1450,7 +1650,6 @@ function addAttempt(earned){
   saveState();
   setStatus("Attempt added");
   renderChapterView();
-  destroyChart("defaultBarChart");renderDefaultBarChart();
 }
 
 window.deleteAttempt=function(idx){
@@ -1461,7 +1660,7 @@ window.deleteAttempt=function(idx){
   const ti=state.attemptTimeline.findLastIndex(t=>t.part===removed.part&&t.chapter===removed.chapter&&t.score===removed.score&&t.earned===removed.earned);
   if(ti>=0)state.attemptTimeline.splice(ti,1);
   setStatus("Attempt deleted");
-  renderChapterView();destroyChart("defaultBarChart");renderDefaultBarChart();
+  renderChapterView();
 };
 
 
@@ -1491,7 +1690,7 @@ function renderGradeEntryView(){
           <label class="subtle-label" for="inputPartSelect">Choose ${xe(course.partLabel.toLowerCase())}</label>
           <select id="inputPartSelect" onchange="selectInputPart(this.value)">${partOptions}</select>
         </div>
-        <button class="primary-btn" onclick="renderGradeEntryView()">Refresh</button>
+
       </div>
     </div>
     ${inputSelectedPart?renderSelectedPartEntry(inputSelectedPart):""}`;
@@ -1517,19 +1716,15 @@ function renderSelectedPartEntry(partKey){
   const isEvaluatingExam = state.selectedCourse === "Evaluating Exam";
 
   if(isAdditionalMocks){
-    const tabs = `<div class="entry-mode-tabs single-tab">
-      <button class="entry-mode-btn active" type="button">Mock Exams</button>
-    </div>`;
     return `<div class="selected-part-panel">
       <div class="entry-part-head">
         <div>
           <h3>${ADDITIONAL_MOCK_PART_LABEL}</h3>
-          <p>No chapters in this section. Use it to record extra mock exams.</p>
+          <p>No chapter/mode selector is needed here. Record the additional mock exam score below.</p>
         </div>
         <div class="entry-weight">Additional</div>
       </div>
       <div class="entry-part-body">
-        ${tabs}
         ${renderAdditionalMockExamEntry()}
       </div>
     </div>`;
@@ -1540,11 +1735,11 @@ function renderSelectedPartEntry(partKey){
   const mode=(isEvaluatingExam && inputEntryMode==="mocks")?"mocks":"chapters";
   const tabs = isEvaluatingExam
     ? `<div class="entry-mode-tabs">
-        <button class="entry-mode-btn ${mode==="chapters"?"active":""}" type="button" onclick="setInputEntryMode('chapters')">Chapters</button>
-        <button class="entry-mode-btn ${mode==="mocks"?"active":""}" type="button" onclick="setInputEntryMode('mocks')">Mock Exams</button>
+        <button class="entry-mode-btn chapter-tab ${mode==="chapters"?"active":""}" type="button" onclick="setInputEntryMode('chapters')">Chapters</button>
+        <button class="entry-mode-btn mock-tab ${mode==="mocks"?"active":""}" type="button" onclick="setInputEntryMode('mocks')">Mock Exams</button>
       </div>`
     : `<div class="entry-mode-tabs single-tab">
-        <button class="entry-mode-btn active" type="button" onclick="setInputEntryMode('chapters')">Chapters</button>
+        <button class="entry-mode-btn chapter-tab active" type="button" onclick="setInputEntryMode('chapters')">Chapters</button>
       </div>`;
   return `<div class="selected-part-panel">
     <div class="entry-part-head">
@@ -1736,7 +1931,6 @@ function setChapterFeedback(encodedPart,encodedChapter,reaction){
   setStatus(`Chapter saved as ${label}`);
   saveState();
   renderGradeEntryView();
-  destroyChart("defaultBarChart");renderDefaultBarChart();
 }
 
 function deleteLatestChapterAttemptFor(encodedPart,encodedChapter){
@@ -1963,22 +2157,10 @@ function renderSyllabus(courseName){
 
 // ── INIT ──
 loadState();
-if(state.selectedCourse){
-  ddCourse.value=state.selectedCourse;
-  const course=COURSES[state.selectedCourse];
-  partLabel.textContent=course.partLabel;
-  ddPart.innerHTML=`<option disabled selected>Select ${course.partLabel}</option>`;
-  Object.keys(course.parts).forEach(p=>{
-    const w=course.parts[p].weight;
-    const o=document.createElement("option");o.value=p;o.textContent=`${p} (${w}%)`;ddPart.appendChild(o);
-  });
-  const weights=Object.values(course.parts).map(p=>p.weight).join(" / ");
-  weightingPill.textContent= "My Results";
-  topPill.textContent=state.selectedCourse;
-}
-renderDefaultBarChart();
+restoreSavedProgressView();
 if(downloadResultsBtn){downloadResultsBtn.style.display="none";}
 setStatus("Saved progress loaded");
+loadStateFromServer();
 </script>
 </body>
 </html>
